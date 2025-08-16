@@ -36,7 +36,10 @@ const updateGig =  async (req, res) => {
     try {
     let gig = await Gig.findById(req.params.id);
     if (!gig) return res.status(404).json({ message: 'Gig not found' });
-    if (gig.client.toString() !== req.user._id.toString()) return res.status(401).json({ message: 'Not authorized' });
+
+    if (gig.client.toString() !== req.user._id.toString()) 
+        
+        return res.status(401).json({ message: 'Not authorized' });
 
     gig = await Gig.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(gig);
@@ -50,9 +53,10 @@ const deleteGig = async (req, res) => {
     try {
     const gig = await Gig.findById(req.params.id);
     if (!gig) return res.status(404).json({ message: 'Gig not found' });
-    if (gig.client.toString() !== req.user._id.toString()) return res.status(401).json({ message: 'Not authorized' });
+    if (gig.client.toString() !== req.user._id.toString()) 
+        return res.status(401).json({ message: 'Not authorized' });
 
-    await gig.remove();
+    await Gig.findByIdAndDelete(req.params._id)
     res.json({ message: 'Gig removed' });
     } catch (err) {
     res.status(500).json({ message: err.message });
