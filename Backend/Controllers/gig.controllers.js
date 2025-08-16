@@ -1,44 +1,62 @@
+import express from 'express'
+const router = express.Router();
 import {Gig} from '../models/Gig.model.js'
-// import ApiError from 
 
-export const createGig = async (req, res, next) => {
+const createGig =  async (req, res) => {
+    const { title, description, skillsRequired, budget, location } = req.body;
     try {
-        const gig = await Gig.create({ ...req.body, client: req.user.id });
-        res.status(201).json({ success: true, gig });
-    } catch (error) {
-        next(error);
+
+        const checkTitle = await Gig.findOne({title})
+        if(checkTitle){
+            return res.status(403).json({
+                message: "Title not available"
+            })
+        }
+
+        const gig = new Gig({ client: req.user._id, title, description, skillsRequired, budget, location });
+        await gig.save();
+        res.status(201).json(gig);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 };
 
-export const getGigs = async (req, res, next) => {
+
+const getAllGig = async (req, res) => {
     try {
-        const gigs = await Gig.find().populate('client', 'name email');
-        res.json({ success: true, gigs });
-    } catch (error) {
-        next(error);
+    const gigs = await Gig.find().populate('client', 'name email');
+    res.json(gigs);
+    } catch (err) {
+    res.status(500).json({ message: err.message });
     }
 };
 
-export const updateGig = async (req, res, next) => {
+
+const updateGig =  async (req, res) => {
     try {
-        const gig = await Gig.findOneAndUpdate(
-            { _id: req.params.id, client: req.user.id },
-            req.body,
-            { new: true }
-        );
-        if (!gig) return next(new ApiError(404, 'Gig not found'));
-        res.json({ success: true, gig });
-    } catch (error) {
-        next(error);
+    let gig = await Gig.findById(req.params.id);
+    if (!gig) return res.status(404).json({ message: 'Gig not found' });
+    if (gig.client.toString() !== req.user._id.toString()) return res.status(401).json({ message: 'Not authorized' });
+
+    gig = await Gig.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(gig);
+    } catch (err) {
+    res.status(500).json({ message: err.message });
     }
 };
 
-export const deleteGig = async (req, res, next) => {
+
+const deleteGig = async (req, res) => {
     try {
-        const gig = await Gig.findOneAndDelete({ _id: req.params.id, client: req.user.id });
-        if (!gig) return next(new ApiError(404, 'Gig not found'));
-        res.json({ success: true, message: 'Gig deleted' });
-    } catch (error) {
-        next(error);
+    const gig = await Gig.findById(req.params.id);
+    if (!gig) return res.status(404).json({ message: 'Gig not found' });
+    if (gig.client.toString() !== req.user._id.toString()) return res.status(401).json({ message: 'Not authorized' });
+
+    await gig.remove();
+    res.json({ message: 'Gig removed' });
+    } catch (err) {
+    res.status(500).json({ message: err.message });
     }
 };
+
+export {createGig, updateGig, getAllGig, deleteGig}

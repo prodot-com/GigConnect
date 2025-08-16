@@ -1,11 +1,13 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const gigSchema = new mongoose.Schema({
+const GigSchema = new mongoose.Schema({
+    client: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     title: { type: String, required: true },
     description: { type: String, required: true },
-    price: { type: Number, required: true },
-    location: { type: String },
-    client: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+    skillsRequired: [String],
+    budget: Number,
+    location: String,
+    status: { type: String, enum: ['Open', 'In Progress', 'Completed'], default: 'Open' }
 }, { timestamps: true });
 
-export const Gig = mongoose.model('Gig', gigSchema);
+export const Gig = mongoose.model('Gig', GigSchema);
