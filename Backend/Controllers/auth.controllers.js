@@ -16,14 +16,20 @@ export const registerUser = async (req, res, next) => {
         const parsed = registerSchema.safeParse(req.body);
         if (!parsed.success) {
     const firstError = parsed.error?.errors?.[0]?.message || 'Invalid input data';
-    return next(new ApiError(400, firstError));
+    return res.status(500).json({
+                message: firstError
+            })
 }
 
 
         const { name, email, password, role } = parsed.data;
 
         const existing = await User.findOne({ email });
-        if (existing) return next(new ApiError(400, 'User already exists'));
+        if (existing){
+            return res.status(500).json({
+                message: 'User already exist'
+            })
+        }
 
         const hashed = await bcrypt.hash(password, 10);
 
