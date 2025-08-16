@@ -1,9 +1,8 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import cors from 'cors';
-import userRoutes from './Routes/users.js';
-import gigRoutes from './Routes/gigs.js';
-import authRoutes from './Routes/auth.js';
+import userRoutes from './Routes/users.route.js';
+import gigRoutes from './Routes/gigs.route.js';
+import authRoutes from './Routes/auth.route.js';
 
 
 const app = express();
