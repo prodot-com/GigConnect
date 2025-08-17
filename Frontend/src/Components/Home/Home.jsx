@@ -36,7 +36,7 @@ const Home = () => {
                 form
             )
 
-            console.log(res)
+            // console.log(res)
             setAlert(res.data.message)
 
         } catch (error) {
@@ -60,9 +60,9 @@ const Home = () => {
             )
 
             localStorage.setItem("token", res.data.token);
-            localStorage.setItem("user", JSON.stringify(res.data.user));
+            localStorage.setItem("userDetails", JSON.stringify(res.data.user));
 
-            console.log(res.data)
+            // console.log(res.data)
             setAlert(res.data.message)
 
             setTimeout(()=>{
@@ -137,7 +137,7 @@ const Home = () => {
             Sign In
             </button>
 
-            <div className="flex justify-center mt-6 text-xl font-medium text-gray-700">
+            <div className="flex justify-center mt-6 text-xl font-medium text-blue-800">
             <h2>{Alert}</h2>
         </div>
         </form>
@@ -246,7 +246,7 @@ const Home = () => {
             </button>
         </form>
 
-        <div className="flex justify-center mt-6 text-xl font-medium text-gray-700">
+        <div className="flex justify-center mt-6 text-xl font-medium text-blue-700">
             <h2>{Alert}</h2>
         </div>
 
