@@ -48,7 +48,7 @@ const Home = () => {
 
         try {
         
-            console.log('SignIn Form:', form  )
+            // console.log('SignIn Form:', form  )
             const res = await axios.post("http://localhost:9000/api/auth/login",
                 {
                     email: form.email,
@@ -56,10 +56,15 @@ const Home = () => {
                 }
             )
 
+            localStorage.setItem("token", res.data.token);
+            localStorage.setItem("user", JSON.stringify(res.data.user));
+
             console.log(res.data)
+            setAlert(res.data.message)
 
         } catch (error) {
             console.log(error)
+            setAlert('Login failed, Check credentials')
         }
 
     }
@@ -121,6 +126,10 @@ const Home = () => {
             >
             Sign In
             </button>
+
+            <div className="flex justify-center mt-6 text-xl font-medium text-gray-700">
+            <h2>{Alert}</h2>
+        </div>
         </form>
 
         {/* <p className="text-sm text-center text-gray-500 mt-6">
