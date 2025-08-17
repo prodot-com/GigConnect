@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react';
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
     const [form, setForm] = useState({ name: "",email: "", password: "", portfolio: "", role: "", skills: []});
     const [showSignin, setShowSignin] = useState(false)
     const [showSignup, setShowSignup] = useState(false)
     const [Alert, setAlert ] = useState('')
+    
+    const navigate = useNavigate()
 
 
     const handleChange = (e) => {
@@ -61,6 +64,13 @@ const Home = () => {
 
             console.log(res.data)
             setAlert(res.data.message)
+
+            setTimeout(()=>{
+                if(res.data.user.role === "Client"){
+                    navigate('/client')
+                }
+                else navigate('/freelancer')
+            },3000)
 
         } catch (error) {
             console.log(error)
