@@ -1,12 +1,11 @@
 import React from 'react'
+import Home from './Components/Home/Home'
 
 const App = () => {
   return (
-    <div>
-      <h4 className='text-indigo-700 flex 
-      h-screen justify-center items-center
-      font-bold text-4xl'>Zaalima  Internship</h4>
-    </div>
+    <>
+      <Home/>
+    </>
   )
 }
 
