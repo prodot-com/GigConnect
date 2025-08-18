@@ -1,6 +1,6 @@
 import { Router } from "express";
 import protect from "../middlewares/authMiddleware.js";
-import { getAllGig, deleteGig, updateGig, createGig } from "../Controllers/Gig.controllers.js";
+import { getAllGig, deleteGig, updateGig, createGig } from "../Controllers/gig.controllers.js";
 
 const router = Router()
 
