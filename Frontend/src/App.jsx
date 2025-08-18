@@ -7,6 +7,7 @@ import CreateGig from './Components/CreateGig/CreateGig'
 import MyGigs from './Components/MyGigs.jsx/MyGigs'
 import AllGigs from './Components/Allgigs.jsx/AllGigs'
 import FreelancerProfile from './Components/FreeProfile/FreeProfile'
+import MyApplications from './Components/GetMyApplication/MyApplication'
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
           <Route path='/my-gig' element={<MyGigs/>} />
           <Route path="/all-gigs" element={<AllGigs/>} />
           <Route path="/freelancer-profile" element={<FreelancerProfile />} />
+          <Route path="/my-applications" element={<MyApplications />} />
         </Routes>
     </BrowserRouter>
   )

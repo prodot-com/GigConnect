@@ -1,77 +1,123 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const FreelancerDashboard = () => {
   const navigate = useNavigate();
-  const [freelancerDetails, setFreelancerDetails] = useState({});
+  const [freelancer, setFreelancer] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const details = JSON.parse(localStorage.getItem("userDetails"));
-    const token = localStorage.getItem("token");
+    const fetchFreelancer = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/");
+          return;
+        }
 
-    if (!token || !details || details.role !== "Freelancer") {
-      navigate("/"); // redirect if not a freelancer
-    } else {
-      setFreelancerDetails(details);
-    }
+        const res = await axios.get("http://localhost:9000/api/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setFreelancer(res.data);
+      } catch (err) {
+        console.error("Error fetching freelancer:", err);
+        navigate("/");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFreelancer();
   }, [navigate]);
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userDetails");
+    localStorage.clear();
     navigate("/");
   };
 
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
+
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Navbar */}
-      <div className="flex justify-between items-center px-6 py-4 shadow-md">
-        <h2 className="text-3xl font-bold">GigConnect</h2>
-        <div className="space-x-4">
-          <button
-            onClick={logout}
-            className="px-4 py-2 cursor-pointer bg-indigo-700 text-white rounded-lg hover:bg-blue-600"
-          >
-            Logout
-          </button>
-        </div>
+    <div className="flex min-h-screen bg-gray-100">
+      {/* Sidebar */}
+      <div className="w-1/4 bg-white shadow-md p-6">
+        <h2 className="text-xl font-bold mb-6 text-indigo-700">
+          {freelancer?.name || "Freelancer"}
+        </h2>
+        <ul className="space-y-4">
+          <li>
+            <button
+              onClick={() => navigate("/freelancer-profile")}
+              className="w-full text-left px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            >
+              My Profile
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => navigate("/all-gigs")}
+              className="w-full text-left px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Browse Gigs
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => navigate("/my-applications")}
+              className="w-full text-left px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              My Applications
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={logout}
+              className="w-full text-left px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+            >
+              Logout
+            </button>
+          </li>
+        </ul>
       </div>
 
-      {/* Dashboard Content */}
-      <div className="flex flex-col mt-28 items-center space-y-5 text-center">
-        <h1 className="text-3xl font-bold pb-7 text-indigo-700">
-          {`Welcome Freelancer ${freelancerDetails.name || ""}`}
+      {/* Main Section */}
+      <div className="flex-1 p-10">
+        <h1 className="text-3xl font-bold text-indigo-700 mb-6">
+          Welcome, {freelancer?.name} 👋
         </h1>
-        <p className="text-lg text-gray-600">
-          Manage your profile, browse gigs, and apply for opportunities.
-        </p>
-      </div>
 
-      {/* Action Buttons */}
-      <div className="flex justify-center space-x-12 pt-12">
-        <div>
-          <button
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div
+            className="p-6 bg-white rounded-lg shadow-lg cursor-pointer hover:shadow-xl"
             onClick={() => navigate("/freelancer-profile")}
-            className="px-6 py-3 cursor-pointer bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-lg"
           >
-            My Profile
-          </button>
-        </div>
-        <div>
-          <button
+            <h2 className="text-xl font-semibold">My Profile</h2>
+            <p className="text-gray-600 mt-2">
+              View and update your freelancer profile details.
+            </p>
+          </div>
+
+          <div
+            className="p-6 bg-white rounded-lg shadow-lg cursor-pointer hover:shadow-xl"
             onClick={() => navigate("/all-gigs")}
-            className="px-6 py-3 cursor-pointer bg-indigo-700 text-white rounded-lg hover:bg-indigo-800 shadow-lg"
           >
-            Browse Gigs
-          </button>
-        </div>
-        <div>
-          <button
+            <h2 className="text-xl font-semibold">Browse Gigs</h2>
+            <p className="text-gray-600 mt-2">
+              Explore available gigs and apply directly.
+            </p>
+          </div>
+
+          <div
+            className="p-6 bg-white rounded-lg shadow-lg cursor-pointer hover:shadow-xl"
             onClick={() => navigate("/my-applications")}
-            className="px-6 py-3 cursor-pointer bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 shadow-lg"
           >
-            My Applications
-          </button>
+            <h2 className="text-xl font-semibold">My Applications</h2>
+            <p className="text-gray-600 mt-2">
+              Track the gigs you’ve applied for.
+            </p>
+          </div>
         </div>
       </div>
     </div>

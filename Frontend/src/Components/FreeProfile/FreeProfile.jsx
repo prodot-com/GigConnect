@@ -1,195 +1,122 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const FreelancerProfile = () => {
-  const [freelancer, setFreelancer] = useState({});
-  const [editMode, setEditMode] = useState(false);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    skills: "",
-    portfolio: "",
-    serviceRate: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState("");
+  const navigate = useNavigate();
+  const [freelancer, setFreelancer] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Fetch logged-in user profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/");
+          return;
+        }
+
         const res = await axios.get("http://localhost:9000/api/users/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
+
         setFreelancer(res.data);
-        setForm({
-          name: res.data.name || "",
-          email: res.data.email || "",
-          skills: res.data.skills ? res.data.skills.join(", ") : "",
-          portfolio: res.data.portfolio || "",
-          serviceRate: res.data.serviceRate || "",
-        });
       } catch (err) {
-        setAlert("Failed to load profile");
+        setError("Failed to load profile");
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchProfile();
-  }, []);
+  }, [navigate]);
 
-  // Handle input changes in edit mode
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  // Update profile
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setAlert("");
-
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.put(
-        "http://localhost:9000/api/users/me",
-        {
-          ...form,
-          skills: form.skills.split(",").map((s) => s.trim()),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      setFreelancer(res.data);
-      setEditMode(false);
-      setAlert("Profile updated successfully ");
-    } catch (err) {
-      setAlert(err.response?.data?.message || "Update failed ");
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (loading) return <p className="text-center mt-10">Loading profile...</p>;
+  if (error) return <p className="text-center text-red-600">{error}</p>;
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10">
-      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-2xl">
-        {/* Header Section */}
-        <div className="flex items-center space-x-6 border-b pb-6">
-          <div className="w-24 h-24 rounded-full bg-indigo-300 flex items-center justify-center text-3xl font-bold text-white">
+    <div className="min-h-screen bg-gray-100 p-6">
+      {/* Navbar */}
+      <div className="flex justify-between items-center px-6 py-4 shadow-md bg-white mb-6">
+        <h2 className="text-2xl font-bold text-indigo-700">GigConnect</h2>
+        <button
+          onClick={() => navigate("/freelancer-dashboard")}
+          className="px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800"
+        >
+          Dashboard
+        </button>
+      </div>
+
+      {/* Profile Card */}
+      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+        <div className="flex flex-col md:flex-row items-center md:items-start">
+          {/* Profile Picture */}
+          <div className="w-32 h-32 bg-gray-300 rounded-full flex items-center justify-center text-3xl font-bold text-white bg-indigo-600">
             {freelancer?.name?.charAt(0)}
           </div>
-          <div>
-            <h1 className="text-3xl font-bold text-indigo-700">
-              {freelancer?.name}
-            </h1>
-            <p className="text-gray-600">{freelancer?.email}</p>
-            <p className="text-gray-600 font-semibold">
-              Service Rate: ₹{freelancer?.serviceRate || "Not set"}
-            </p>
-          </div>
-          <div className="ml-auto">
-            <button
-              onClick={() => setEditMode(!editMode)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-            >
-              {editMode ? "Cancel" : "Edit Profile"}
-            </button>
+
+          {/* Info */}
+          <div className="md:ml-8 mt-4 md:mt-0 w-full">
+            <div className="flex justify-between items-center">
+              <h1 className="text-3xl font-bold text-gray-800">
+                {freelancer?.name}
+              </h1>
+              <button
+                onClick={() => navigate("/edit-freelancer-profile")}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Edit Profile
+              </button>
+            </div>
+            <p className="text-gray-500 mt-1">{freelancer?.email}</p>
+            <p className="text-gray-500">{freelancer?.location || "Location not set"}</p>
+
+            <div className="mt-6">
+              <h2 className="text-xl font-semibold text-indigo-700">About</h2>
+              <p className="text-gray-700 mt-2">
+                {freelancer?.bio || "No bio added yet."}
+              </p>
+            </div>
+
+            <div className="mt-6">
+              <h2 className="text-xl font-semibold text-indigo-700">Skills</h2>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {freelancer?.skills?.length > 0 ? (
+                  freelancer.skills.map((skill, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm"
+                    >
+                      {skill}
+                    </span>
+                  ))
+                ) : (
+                  <p className="text-gray-600">No skills added yet.</p>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <h2 className="text-xl font-semibold text-indigo-700">Portfolio</h2>
+              <p className="text-gray-700 mt-2">
+                {freelancer?.portfolio || "No portfolio link added yet."}
+              </p>
+            </div>
+
+            <div className="mt-6">
+              <h2 className="text-xl font-semibold text-indigo-700">
+                Service Rate
+              </h2>
+              <p className="text-gray-700 mt-2">
+                {freelancer?.rate
+                  ? `₹${freelancer.rate} / hour`
+                  : "Rate not set"}
+              </p>
+            </div>
           </div>
         </div>
-
-        {/* Alert */}
-        {alert && (
-          <p className="text-center text-sm text-red-600 mt-3">{alert}</p>
-        )}
-
-        {/* Profile Info */}
-        {!editMode ? (
-          <div className="mt-6 space-y-4">
-            <div>
-              <h2 className="font-semibold">Portfolio</h2>
-              <a
-                href={freelancer?.portfolio}
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-600 underline"
-              >
-                {freelancer?.portfolio || "Not provided"}
-              </a>
-            </div>
-            <div>
-              <h2 className="font-semibold">Skills</h2>
-              <p>{freelancer?.skills?.join(", ") || "No skills added"}</p>
-            </div>
-          </div>
-        ) : (
-          <form onSubmit={handleUpdate} className="mt-6 space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                required
-                className="w-full mt-1 px-4 py-2 border rounded-lg"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Portfolio
-              </label>
-              <input
-                type="text"
-                name="portfolio"
-                value={form.portfolio}
-                onChange={handleChange}
-                className="w-full mt-1 px-4 py-2 border rounded-lg"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Skills (comma separated)
-              </label>
-              <input
-                type="text"
-                name="skills"
-                value={form.skills}
-                onChange={handleChange}
-                className="w-full mt-1 px-4 py-2 border rounded-lg"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Service Rate (₹)
-              </label>
-              <input
-                type="number"
-                name="serviceRate"
-                value={form.serviceRate}
-                onChange={handleChange}
-                className="w-full mt-1 px-4 py-2 border rounded-lg"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
-            >
-              {loading ? "Updating..." : "Save Changes"}
-            </button>
-          </form>
-        )}
       </div>
     </div>
   );
