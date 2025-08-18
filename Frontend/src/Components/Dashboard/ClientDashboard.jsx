@@ -14,10 +14,26 @@ const ClientDashboard = () => {
 
     },[navigate])
 
+    const logout = ()=>{
+      localStorage.clear('token', 'userDetails')
+      navigate('/')
+    }
+
   return (
+    <div>
+      <div className="flex justify-between items-center px-6 py-4 shadow-md">
+        <h2 className="text-3xl font-bold">GigConnect</h2>
+
+        <div className="space-x-4">
+            <button onClick={logout} className="px-4 py-2 cursor-pointer bg-indigo-700 text-white rounded-lg hover:bg-blue-600">
+            Logout
+            </button>
+        </div>
+        </div>
     <div className='flex flex-col mt-28
             items-center h-screen space-y-5 text-center'>
       <h1 className='text-3xl font-bold pb-7 text-indigo-700'>{`Welcome Client ${clientDetails.name}`}</h1>
+    </div>
     </div>
   )
 }
