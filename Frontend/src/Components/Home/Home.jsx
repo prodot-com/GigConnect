@@ -69,7 +69,7 @@ const Home = () => {
                 if(res.data.user.role === "Client"){
                     navigate('/client')
                 }
-                else navigate('/freelancer')
+                else navigate('/freelancer-dashboard')
             },3000)
 
         } catch (error) {

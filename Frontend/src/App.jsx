@@ -5,6 +5,8 @@ import ClientDashboard from './Components/Dashboard/ClientDashboard'
 import FreeDashboard from './Components/Dashboard/FreeDashboard'
 import CreateGig from './Components/CreateGig/CreateGig'
 import MyGigs from './Components/MyGigs.jsx/MyGigs'
+import AllGigs from './Components/Allgigs.jsx/AllGigs'
+import FreelancerProfile from './Components/FreeProfile/FreeProfile'
 
 const App = () => {
   return (
@@ -12,9 +14,11 @@ const App = () => {
         <Routes>
           <Route path='/' element={<Home/>} />
           <Route path='/client' element={<ClientDashboard/>} />
-          <Route path='/freelancer' element={<FreeDashboard/>} />
+          <Route path='/freelancer-dashboard' element={<FreeDashboard/>} />
           <Route path='/create-gig' element={<CreateGig/>} />
           <Route path='/my-gig' element={<MyGigs/>} />
+          <Route path="/all-gigs" element={<AllGigs/>} />
+          <Route path="/freelancer-profile" element={<FreelancerProfile />} />
         </Routes>
     </BrowserRouter>
   )

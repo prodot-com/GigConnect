@@ -43,9 +43,10 @@ const CreateGig = () => {
 
     try {
       const token = localStorage.getItem("token");
+      console.log(token)
 
       const res = await axios.post(
-        "http://localhost:5000/api/gigs",
+        "http://localhost:9000/api/gigs",
         gig,
         {
           headers: {
@@ -56,7 +57,7 @@ const CreateGig = () => {
 
       if (res.data) {
         setAlert("Gig created successfully");
-        navigate("/client-dashboard");
+        // navigate("/client-dashboard");
       }
     } catch (err) {
       console.error(err);

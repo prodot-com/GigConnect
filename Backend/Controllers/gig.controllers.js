@@ -13,6 +13,8 @@ const createGig =  async (req, res) => {
             })
         }
 
+        console.log(req.user)
+
         const gig = new Gig({ client: req.user._id, title, description, skillsRequired, budget, location });
         await gig.save();
         res.status(201).json(gig);
@@ -63,4 +65,36 @@ const deleteGig = async (req, res) => {
     }
 };
 
-export {createGig, updateGig, getAllGig, deleteGig}
+const applyToGig = async (req, res) => {
+  try {
+    const gig = await Gig.findById(req.params.id);
+    if (!gig) return res.status(404).json({ message: "Gig not found" });
+
+    if (gig.appliedFreelancers.includes(req.user._id)) {
+      return res.status(400).json({ message: "You already applied to this gig" });
+    }
+
+    gig.appliedFreelancers.push(req.user._id);
+    await gig.save();
+
+    res.json({ message: "Applied successfully", gig });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Get gigs applied by logged-in freelancer
+const getMyApplications = async (req, res) => {
+  try {
+    const gigs = await Gig.find({ appliedFreelancers: req.user._id })
+      .populate("client", "name email")
+      .populate("appliedFreelancers", "name email");
+
+    res.json(gigs);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+export {createGig, updateGig, getAllGig, deleteGig, applyToGig, getMyApplications}
