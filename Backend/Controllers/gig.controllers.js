@@ -25,13 +25,38 @@ const createGig =  async (req, res) => {
 
 
 const getAllGig = async (req, res) => {
-    try {
-    const gigs = await Gig.find().populate('client', 'name email');
-    res.json(gigs);
-    } catch (err) {
-    res.status(500).json({ message: err.message });
+  try {
+    const { search, location, minBudget, maxBudget } = req.query;
+
+    let filter = {};
+
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+        { skillsRequired: { $regex: search, $options: "i" } },
+      ];
     }
+
+    if (location) {
+      filter.location = { $regex: location, $options: "i" };
+    }
+
+    if (minBudget || maxBudget) {
+      filter.budget = {};
+      if (minBudget) filter.budget.$gte = Number(minBudget);
+      if (maxBudget) filter.budget.$lte = Number(maxBudget);
+    }
+
+    const gigs = await Gig.find(filter).populate("client", "name email");
+    res.json(gigs);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
+
+
+
 
 
 const updateGig =  async (req, res) => {
