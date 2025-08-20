@@ -1,5 +1,15 @@
 import mongoose from "mongoose";
 
+const reviewSchema = new mongoose.Schema(
+  {
+    freelancer: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    client: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    rating: { type: Number, min: 1, max: 5, required: true },
+    comment: { type: String, required: true },
+  },
+  { timestamps: true }
+);
+
 const gigSchema = new mongoose.Schema(
   {
     client: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -31,6 +41,8 @@ const gigSchema = new mongoose.Schema(
       enum: ["Open", "In Progress", "Completed"],
       default: "Open",
     },
+
+    reviews: [reviewSchema], // 👈 added reviews array
   },
   { timestamps: true }
 );

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import protect from "../middlewares/authMiddleware.js";
-import { getAllGig, deleteGig, updateGig, createGig, applyToGig, getMyApplications, getGig, getMyGigs, getGigApplications, acceptApplication, rejectApplication, completeGig } from "../Controllers/gig.controllers.js";
+import { getAllGig, deleteGig, updateGig, createGig, applyToGig, getMyApplications, getGig, getMyGigs, getGigApplications, acceptApplication, rejectApplication, completeGig, addReview, getFreelancerReviews } from "../Controllers/gig.controllers.js";
 
 const router = Router()
 
@@ -16,7 +16,10 @@ router.route("/:id/applications").get(protect, getGigApplications);
 
 router.route("/:id/accept/:freelancerId").post(protect, acceptApplication);
 router.route("/:id/reject/:freelancerId").post(protect, rejectApplication);
-router.post("/:id/complete", protect, completeGig);
+router.route("/:id/complete").post(protect, completeGig);
+router.route("/:id/review").post(protect, addReview);
+router.route("/reviews/:freelancerId").get(getFreelancerReviews);
+
 
 
 

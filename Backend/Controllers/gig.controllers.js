@@ -138,11 +138,17 @@ const getMyApplications = async (req, res) => {
   try {
     const gigs = await Gig.find({ "appliedFreelancers.user": req.user._id })
       .populate("client", "name email")
-      .populate("appliedFreelancers.user", "name email");
+      .populate("appliedFreelancers.user", "name email")
+      .populate("reviews.client", "name email");
 
     const result = gigs.map((gig) => {
       const myApplication = gig.appliedFreelancers.find(
         (a) => a.user._id.toString() === req.user._id.toString()
+      );
+
+      // ✅ Find only the review for THIS freelancer
+      const myReview = gig.reviews.find(
+        (r) => r.freelancer.toString() === req.user._id.toString()
       );
 
       return {
@@ -152,10 +158,14 @@ const getMyApplications = async (req, res) => {
         budget: gig.budget,
         location: gig.location,
         client: gig.client,
-        // ✅ use the freelancer-specific status
-        applicationStatus: myApplication?.status || "Pending",
-        // ✅ include global gig status (Open / In Progress / Completed)
-        gigStatus: gig.status,
+        status: myApplication?.status || "Pending",
+        review: myReview
+          ? {
+              rating: myReview.rating,
+              comment: myReview.comment,
+              reviewer: myReview.client, // includes name/email
+            }
+          : null,
       };
     });
 
@@ -165,6 +175,8 @@ const getMyApplications = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
 
 
 // Get gigs created by client
@@ -261,17 +273,12 @@ const rejectApplication = async (req, res) => {
 const completeGig = async (req, res) => {
   try {
     const { id } = req.params;
-
     const gig = await Gig.findById(id);
     if (!gig) return res.status(404).json({ message: "Gig not found" });
 
-    // Only the client who created the gig can complete it
+    // Only client can mark as completed
     if (gig.client.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: "Not authorized to complete this gig" });
-    }
-
-    if (gig.status !== "In Progress") {
-      return res.status(400).json({ message: "Only in-progress gigs can be completed" });
+      return res.status(403).json({ message: "Not authorized" });
     }
 
     gig.status = "Completed";
@@ -282,6 +289,60 @@ const completeGig = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// ✅ Add review
+const addReview = async (req, res) => {
+  try {
+    const { id } = req.params; // gigId
+    const { rating, comment } = req.body;
+
+    const gig = await Gig.findById(id);
+    if (!gig) return res.status(404).json({ message: "Gig not found" });
+
+    // Only client can review after gig is completed
+    if (gig.client.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+    if (gig.status !== "Completed") {
+      return res.status(400).json({ message: "Gig must be completed to review" });
+    }
+
+    // Push review
+    gig.reviews.push({
+      freelancer: gig.assignedFreelancer,
+      client: req.user._id,
+      rating,
+      comment,
+    });
+
+    await gig.save();
+
+    res.json({ message: "Review added successfully", gig });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// ✅ Get all reviews of a freelancer
+const getFreelancerReviews = async (req, res) => {
+  try {
+    const { freelancerId } = req.params;
+    const gigs = await Gig.find({ "reviews.freelancer": freelancerId }).populate(
+      "reviews.client",
+      "name email"
+    );
+
+    const reviews = gigs.flatMap((g) =>
+      g.reviews.filter((r) => r.freelancer.toString() === freelancerId)
+    );
+
+    res.json(reviews);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
 
 
 
@@ -297,5 +358,7 @@ export {
   getGigApplications,
   rejectApplication,
   acceptApplication,
-  completeGig
+  completeGig,
+  addReview,
+  getFreelancerReviews
 };
