@@ -10,6 +10,7 @@ import FreelancerProfile from './Components/FreeProfile/FreeProfile'
 import MyApplications from './Components/GetMyApplication/MyApplication'
 import GigDetails from './Components/GigDetails/GigDetails'
 import ViewApplications from './Components/VeiwApplication/VeiwApplication'
+import GigChat from './Components/Gigchat/GigChat'
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
           <Route path="/my-applications" element={<MyApplications />} />
           <Route path="/gig/:id" element={<GigDetails />} />
           <Route path="/gig/:id/applications" element={<ViewApplications />} />
+          <Route path="/gig/:id/chat" element={<GigChat />} />
 
 
         </Routes>

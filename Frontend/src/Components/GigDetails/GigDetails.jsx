@@ -19,9 +19,15 @@ const GigDetails = () => {
         const { data } = await axios.get(`http://localhost:9000/api/gigs/${id}`);
         setGig(data);
 
-        if (data.appliedFreelancers?.includes(user?._id)) {
-          setApplied(true);
-        }
+        // appliedFreelancers is array of objects { user: {...}, status: "Pending" }
+        const alreadyApplied = Array.isArray(data.appliedFreelancers) &&
+          data.appliedFreelancers.some((a) => {
+            // a.user may be populated object or id string
+            const uid = a.user?._id ? a.user._id.toString() : a.user?.toString();
+            return user && uid === user._id;
+          });
+
+        setApplied(Boolean(alreadyApplied));
       } catch (error) {
         console.error("Error fetching gig details:", error);
         setAlert("Failed to load gig details");
@@ -50,6 +56,13 @@ const GigDetails = () => {
 
       setAlert(res.data.message || "Applied successfully!");
       setApplied(true);
+
+      // update local gig appliedFreelancers if present
+      setGig((prev) => {
+        if (!prev) return prev;
+        const newApp = { user: { _id: user._id, name: user.name, email: user.email }, status: "Pending" };
+        return { ...prev, appliedFreelancers: [...(prev.appliedFreelancers || []), newApp] };
+      });
     } catch (err) {
       setAlert(err.response?.data?.message || "Failed to apply for gig");
     }
@@ -73,12 +86,20 @@ const GigDetails = () => {
         >
           GigConnect
         </h2>
-        <button
-          onClick={() => navigate("/all-gigs")}
-          className="px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800"
-        >
-          Back to Gigs
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => navigate("/all-gigs")}
+            className="px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800"
+          >
+            Back to Gigs
+          </button>
+          <button
+            onClick={() => navigate(`/gig/${gig._id}/chat`)}
+            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800"
+          >
+            Open Chat Room
+          </button>
+        </div>
       </div>
 
       {alert && (
@@ -140,6 +161,15 @@ const GigDetails = () => {
             </button>
           )}
         </div>
+<div className="mt-3">
+  <button
+    onClick={() => navigate(`/gig/${gig._id}/chat`)}
+    className="w-full bg-gray-700 text-white py-2 rounded-lg hover:bg-gray-800 transition"
+  >
+    Open Chat Room
+  </button>
+</div>
+
       </div>
     </div>
   );

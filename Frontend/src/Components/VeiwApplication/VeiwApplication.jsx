@@ -1,10 +1,11 @@
-// src/Components/Client/ViewApplications.jsx
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const ViewApplications = () => {
   const { id } = useParams(); // gigId
+  const navigate = useNavigate();
+
   const [gig, setGig] = useState(null);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState("");
@@ -19,6 +20,7 @@ const ViewApplications = () => {
       });
       setGig(data);
     } catch (err) {
+      console.error(err);
       setAlert("Failed to load applications");
     } finally {
       setLoading(false);
@@ -27,6 +29,7 @@ const ViewApplications = () => {
 
   useEffect(() => {
     fetchGig();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleDecision = async (freelancerId, action) => {
@@ -37,6 +40,7 @@ const ViewApplications = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setAlert(res.data.message);
+      // update local gig snapshot
       setGig(res.data.gig);
     } catch (err) {
       setAlert(err.response?.data?.message || "Error processing request");
@@ -84,44 +88,57 @@ const ViewApplications = () => {
       {alert && <p className="text-center text-red-600 mb-4">{alert}</p>}
 
       {/* Applications */}
-      {gig?.appliedFreelancers?.length === 0 ? (
+      {(!gig?.appliedFreelancers || gig.appliedFreelancers.length === 0) ? (
         <p className="text-center text-gray-600">No applications yet.</p>
       ) : (
         <div className="grid gap-4">
-          {gig.appliedFreelancers.map((freelancer) => (
-            <div key={freelancer.user._id} className="bg-white shadow rounded-lg p-4">
-              <h2 className="text-lg font-semibold">{freelancer.user.name}</h2>
-              <p className="text-gray-600">{freelancer.user.email}</p>
-              <p className="text-gray-600">
-                <strong>Status:</strong> {freelancer.status}
-              </p>
+          {gig.appliedFreelancers.map((application) => {
+            // application.user may be populated object or id string
+            const freelancerUser = application.user?._id ? application.user : { _id: application.user };
+            const fid = freelancerUser._id.toString();
 
-              {gig.assignedFreelancer &&
-              gig.assignedFreelancer._id === freelancer.user._id ? (
-                <p className="text-green-600 font-bold mt-2">✅ Assigned</p>
-              ) : (
-                <div className="mt-3 space-x-3">
-                  <button
-                    onClick={() => handleDecision(freelancer.user._id, "accept")}
-                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                  >
-                    Accept
-                  </button>
-                  <button
-                    onClick={() => handleDecision(freelancer.user._id, "reject")}
-                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                  >
-                    Reject
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+            return (
+              <div key={fid} className="bg-white shadow rounded-lg p-4">
+                <h2 className="text-lg font-semibold">{application.user?.name || "Freelancer"}</h2>
+                <p className="text-gray-600">{application.user?.email || ""}</p>
+                <p className="text-gray-600">
+                  <strong>Status:</strong> {application.status}
+                </p>
+
+                {gig.assignedFreelancer &&
+                (gig.assignedFreelancer._id || gig.assignedFreelancer).toString() === fid ? (
+                  <p className="text-green-600 font-bold mt-2">✅ Assigned</p>
+                ) : (
+                  <div className="mt-3 space-x-3 flex flex-wrap">
+                    <button
+                      onClick={() => handleDecision(fid, "accept")}
+                      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                    >
+                      Accept
+                    </button>
+                    <button
+                      onClick={() => handleDecision(fid, "reject")}
+                      className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                    >
+                      Reject
+                    </button>
+
+                    <button
+                      onClick={() => navigate(`/gig/${id}/chat?to=${fid}`)}
+                      className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                    >
+                      Chat
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
       {/* Mark complete */}
-      {gig.status === "In Progress" && (
+      {gig?.status === "In Progress" && (
         <div className="text-center mt-6">
           <button
             onClick={handleComplete}
@@ -133,7 +150,7 @@ const ViewApplications = () => {
       )}
 
       {/* Submit Review */}
-      {gig.status === "Completed" && gig.assignedFreelancer && (
+      {gig?.status === "Completed" && gig.assignedFreelancer && (
         <div className="mt-6 bg-white p-4 shadow rounded-lg">
           <h3 className="text-lg font-semibold mb-2">Leave a Review</h3>
           <form onSubmit={handleReviewSubmit}>
@@ -172,7 +189,7 @@ const ViewApplications = () => {
       )}
 
       {/* Show Existing Reviews */}
-      {gig.reviews && gig.reviews.length > 0 && (
+      {gig?.reviews && gig.reviews.length > 0 && (
         <div className="mt-6 bg-gray-100 p-4 rounded-lg">
           <h3 className="text-lg font-semibold mb-3">Reviews</h3>
           {gig.reviews.map((r) => (
