@@ -148,5 +148,28 @@ const getMyGigs = async (req, res) => {
 
 
 
+const getGigApplications = async (req, res) => {
+  try {
+    const gig = await Gig.findById(req.params.id)
+      .populate("appliedFreelancers", "name email skills portfolio rate");
 
-export {createGig, updateGig, getAllGig, deleteGig, applyToGig, getMyApplications, getGig, getMyGigs}
+    if (!gig) {
+      return res.status(404).json({ message: "Gig not found" });
+    }
+
+    // Only allow the client who posted this gig to see applications
+    if (gig.client.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Not authorized to view this gig's applications" });
+    }
+
+    res.json(gig.appliedFreelancers);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
+
+
+export {createGig, updateGig, getAllGig, deleteGig, applyToGig, getMyApplications, getGig, getMyGigs, getGigApplications}

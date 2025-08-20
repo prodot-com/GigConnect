@@ -9,6 +9,7 @@ import AllGigs from './Components/Allgigs.jsx/AllGigs'
 import FreelancerProfile from './Components/FreeProfile/FreeProfile'
 import MyApplications from './Components/GetMyApplication/MyApplication'
 import GigDetails from './Components/GigDetails/GigDetails'
+import ViewApplications from './Components/VeiwApplication/VeiwApplication'
 
 const App = () => {
   return (
@@ -23,6 +24,8 @@ const App = () => {
           <Route path="/freelancer-profile" element={<FreelancerProfile />} />
           <Route path="/my-applications" element={<MyApplications />} />
           <Route path="/gig/:id" element={<GigDetails />} />
+          <Route path="/gig/:id/applications" element={<ViewApplications />} />
+
 
         </Routes>
     </BrowserRouter>

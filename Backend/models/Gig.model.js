@@ -8,7 +8,9 @@ const gigSchema = new mongoose.Schema({
   budget: { type: Number, required: true },
   location: { type: String },
   status: { type: String, default: "Open" },
-  appliedFreelancers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // 👈 new field
+  appliedFreelancers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  assignedFreelancer: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+,
 }, { timestamps: true });
 
 export const Gig = mongoose.model("Gig", gigSchema);
