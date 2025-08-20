@@ -23,7 +23,6 @@ const MyApplications = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-
         setGigs(res.data);
       } catch (err) {
         setAlert("Failed to load applications");
@@ -43,7 +42,6 @@ const MyApplications = () => {
         >
           GigConnect
         </h2>
-
         <div className="space-x-4">
           <button
             onClick={() => navigate("/freelancer-dashboard")}
@@ -76,7 +74,9 @@ const MyApplications = () => {
               key={gig._id}
               className="bg-white shadow-lg rounded-xl p-6 flex flex-col"
             >
-              <h2 className="text-xl font-bold text-indigo-700">{gig.title}</h2>
+              <h2 className="text-xl font-bold text-indigo-700">
+                {gig.title}
+              </h2>
               <p className="text-gray-600 mt-2">{gig.description}</p>
               <p className="text-gray-600 mt-1">
                 <strong>Budget:</strong> ₹{gig.budget}
@@ -88,6 +88,21 @@ const MyApplications = () => {
                 <strong>Client:</strong> {gig.client?.name} (
                 {gig.client?.email})
               </p>
+
+              {/* Status */}
+              <p className="mt-2 font-semibold">
+  Status:{" "}
+  {gig.applicationStatus === "Accepted" ? (
+    <span className="text-green-600">🟢 Accepted</span>
+  ) : gig.applicationStatus === "Rejected" ? (
+    <span className="text-red-600">❌ Rejected</span>
+  ) : gig.gigStatus === "Completed" ? (
+    <span className="text-blue-600">✅ Completed</span>
+  ) : (
+    <span className="text-gray-600">⏳ Pending</span>
+  )}
+</p>
+
             </div>
           ))}
         </div>

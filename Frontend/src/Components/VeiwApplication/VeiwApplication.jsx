@@ -1,12 +1,11 @@
 // src/Components/Client/ViewApplications.jsx
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 
 const ViewApplications = () => {
-  const { id } = useParams(); // gig id
-  const navigate = useNavigate();
-  const [freelancers, setFreelancers] = useState([]);
+  const { id } = useParams(); // gigId
+  const [gig, setGig] = useState(null);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState("");
 
@@ -14,90 +13,121 @@ const ViewApplications = () => {
     const fetchApplications = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) {
-          setAlert("Please login as Client to view applications");
-          return;
-        }
-
-        const res = await axios.get(
-          `http://localhost:9000/api/gigs/${id}/applications`,
+        const { data } = await axios.get(
+          `http://localhost:9000/api/gigs/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-
-        setFreelancers(res.data);
+        setGig(data);
       } catch (err) {
-        setAlert(err.response?.data?.message || "Failed to load applications");
+        setAlert("Failed to load applications");
       } finally {
         setLoading(false);
       }
     };
-
     fetchApplications();
   }, [id]);
 
-  if (loading) return <p className="text-center mt-10">Loading applications...</p>;
+  const handleDecision = async (freelancerId, action) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        `http://localhost:9000/api/gigs/${id}/${action}/${freelancerId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setAlert(res.data.message);
+      setGig(res.data.gig);
+    } catch (err) {
+      setAlert(err.response?.data?.message || "Error processing request");
+    }
+  };
+
+  const handleComplete = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        `http://localhost:9000/api/gigs/${id}/complete`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setAlert(res.data.message);
+      setGig(res.data.gig);
+    } catch (err) {
+      setAlert(err.response?.data?.message || "Error completing gig");
+    }
+  };
+
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
 
   return (
-    <div className="px-6 py-4 min-h-screen bg-gray-50">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-indigo-700">Applications</h2>
-        <button
-          onClick={() => navigate("/client-dashboard")}
-          className="px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800 transition"
-        >
-          Dashboard
-        </button>
-      </div>
+    <div className="p-6 min-h-screen bg-gray-50">
+      <h1 className="text-2xl font-bold text-center text-indigo-700 mb-6">
+        Applications for {gig?.title}
+      </h1>
 
-      {alert && (
-        <p className="text-center text-red-600 font-semibold mb-4">{alert}</p>
-      )}
+      {alert && <p className="text-center text-red-600 mb-4">{alert}</p>}
 
-      {freelancers.length === 0 ? (
-        <p className="text-center text-gray-500">
-          No freelancers have applied yet.
-        </p>
+      {gig?.appliedFreelancers?.length === 0 ? (
+        <p className="text-center text-gray-600">No applications yet.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {freelancers.map((f) => (
+        <div className="grid gap-4">
+          {gig.appliedFreelancers.map((app) => (
             <div
-              key={f._id}
-              className="bg-white shadow-lg rounded-xl p-6 flex flex-col"
+              key={app.user._id}
+              className="bg-white shadow rounded-lg p-4"
             >
-              <h3 className="text-xl font-bold text-indigo-700">{f.name}</h3>
-              <p className="text-gray-600">{f.email}</p>
+              <h2 className="text-lg font-semibold">{app.user.name}</h2>
+              <p className="text-gray-600">{app.user.email}</p>
               <p className="text-gray-600">
                 <strong>Skills:</strong>{" "}
-                {f.skills && f.skills.length > 0
-                  ? f.skills.join(", ")
-                  : "Not specified"}
+                {app.user.skills?.length
+                  ? app.user.skills.join(", ")
+                  : "N/A"}
               </p>
-              <p className="text-gray-600">
-                <strong>Rate:</strong> ₹{f.rate || "N/A"}
+              <p className="mt-2 font-medium">
+                Status:{" "}
+                {app.status === "Accepted" ? (
+                  <span className="text-green-600">✅ Accepted</span>
+                ) : app.status === "Rejected" ? (
+                  <span className="text-red-600">❌ Rejected</span>
+                ) : (
+                  <span className="text-gray-600">⏳ Pending</span>
+                )}
               </p>
-              {f.portfolio && (
-                <a
-                  href={f.portfolio}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline mt-2"
-                >
-                  View Portfolio
-                </a>
-              )}
 
-              <div className="mt-4 space-x-2">
-                <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
-                  Accept
-                </button>
-                <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-                  Reject
-                </button>
-              </div>
+              {/* Show buttons only for pending */}
+              {app.status === "Pending" && gig.status === "Open" && (
+                <div className="mt-3 space-x-3">
+                  <button
+                    onClick={() => handleDecision(app.user._id, "accept")}
+                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    onClick={() => handleDecision(app.user._id, "reject")}
+                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                  >
+                    Reject
+                  </button>
+                </div>
+              )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Show Complete button if gig is in progress */}
+      {gig?.status === "In Progress" && (
+        <div className="text-center mt-6">
+          <button
+            onClick={handleComplete}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Mark as Completed
+          </button>
         </div>
       )}
     </div>
