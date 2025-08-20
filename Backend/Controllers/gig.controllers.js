@@ -23,6 +23,16 @@ const createGig =  async (req, res) => {
     }
 };
 
+  const getGig = async (req, res) => {
+  try {
+    const gig = await Gig.findById(req.params.id).populate("client", "name email");
+    if (!gig) return res.status(404).json({ message: "Gig not found" });
+    res.json(gig);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 
 const getAllGig = async (req, res) => {
   try {
@@ -54,8 +64,6 @@ const getAllGig = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
-
 
 
 
@@ -122,4 +130,23 @@ const getMyApplications = async (req, res) => {
 };
 
 
-export {createGig, updateGig, getAllGig, deleteGig, applyToGig, getMyApplications}
+const getMyGigs = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authorized, user missing" });
+    }
+
+    const gigs = await Gig.find({ client: req.user._id })
+      .populate("appliedFreelancers", "name email skills");
+
+    res.json(gigs);
+  } catch (err) {
+    console.error("Error in getMyGigs:", err.message);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+
+
+
+export {createGig, updateGig, getAllGig, deleteGig, applyToGig, getMyApplications, getGig, getMyGigs}

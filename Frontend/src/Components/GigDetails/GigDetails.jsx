@@ -74,7 +74,7 @@ const GigDetails = () => {
           GigConnect
         </h2>
         <button
-          onClick={() => navigate("/browse-gigs")}
+          onClick={() => navigate("/all-gigs")}
           className="px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800"
         >
           Back to Gigs

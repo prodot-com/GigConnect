@@ -61,7 +61,16 @@ const BrowseGigs = () => {
 
   return (
     <div className="px-6 py-4 min-h-screen bg-gray-50">
-      <h2 className="text-3xl font-bold mb-6 text-center">Browse Gigs</h2>
+      {/* Top Bar */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold">Browse Gigs</h2>
+        <button
+          onClick={() => navigate("/freelancer-dashboard")}
+          className="px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800 transition"
+        >
+          Dashboard
+        </button>
+      </div>
 
       {alert && (
         <p className="text-center text-red-600 font-semibold mb-4">{alert}</p>
