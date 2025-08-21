@@ -4,53 +4,33 @@ import { useNavigate } from "react-router-dom";
 
 const BrowseGigs = () => {
   const [gigs, setGigs] = useState([]);
-  const [filteredGigs, setFilteredGigs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState("");
   const [search, setSearch] = useState("");
-  const navigate = useNavigate();
+  const [location, setLocation] = useState("");
+  const [minBudget, setMinBudget] = useState("");
+  const [maxBudget, setMaxBudget] = useState("");
 
+  const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("userDetails")); // Logged in user
 
   useEffect(() => {
-    const fetchGigs = async () => {
-      try {
-        const { data } = await axios.get("http://localhost:9000/api/gigs");
-        setGigs(data);
-        setFilteredGigs(data); // initially show all gigs
-      } catch (error) {
-        console.error("Error fetching gigs:", error);
-        setAlert("Failed to load gigs");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchGigs();
   }, []);
 
-  // Search filter logic
-  useEffect(() => {
-    if (!search.trim()) {
-      setFilteredGigs(gigs);
-      return;
+  const fetchGigs = async () => {
+    try {
+      const { data } = await axios.get("http://localhost:9000/api/gigs", {
+        params: { search, location, minBudget, maxBudget },
+      });
+      setGigs(data);
+    } catch (error) {
+      console.error("Error fetching gigs:", error);
+      setAlert("Failed to load gigs");
+    } finally {
+      setLoading(false);
     }
-
-    const lower = search.toLowerCase();
-    const filtered = gigs.filter((gig) => {
-      const skills = Array.isArray(gig.skillsRequired)
-        ? gig.skillsRequired.join(", ")
-        : gig.skillsRequired;
-
-      return (
-        gig.title?.toLowerCase().includes(lower) ||
-        gig.description?.toLowerCase().includes(lower) ||
-        gig.location?.toLowerCase().includes(lower) ||
-        skills?.toLowerCase().includes(lower)
-      );
-    });
-
-    setFilteredGigs(filtered);
-  }, [search, gigs]);
+  };
 
   const handleApply = async (gigId) => {
     try {
@@ -61,17 +41,17 @@ const BrowseGigs = () => {
       }
 
       const res = await axios.post(
-        `http://localhost:9000/api/gigs/${gigId}/apply`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+  `http://localhost:9000/api/gigs/${gigId}/apply`,
+  {},
+  { headers: { Authorization: `Bearer ${token}` } }
+);
 
       setAlert(res.data.message || "Applied successfully!");
 
-      // Update UI
+      // Update frontend state without refresh
       const updated = gigs.map((g) =>
         g._id === gigId
-          ? { ...g, appliedFreelancers: [...g.appliedFreelancers, user._id] }
+          ? { ...g, appliedFreelancers: [...(g.appliedFreelancers || []), user._id] }
           : g
       );
       setGigs(updated);
@@ -87,18 +67,8 @@ const BrowseGigs = () => {
   return (
     <div className="px-6 py-4 min-h-screen bg-gray-50">
       {/* Top Bar */}
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+      <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold">Browse Gigs</h2>
-
-        {/* Search Bar */}
-        <input
-          type="text"
-          placeholder="Search gigs by title, skills, location..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-1/2 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-
         <button
           onClick={() => navigate("/freelancer-dashboard")}
           className="px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800 transition"
@@ -107,16 +77,59 @@ const BrowseGigs = () => {
         </button>
       </div>
 
+      {/* Alerts */}
       {alert && (
         <p className="text-center text-red-600 font-semibold mb-4">{alert}</p>
       )}
 
-      {filteredGigs.length === 0 ? (
+      {/* Filters */}
+      <div className="bg-white p-4 rounded-lg shadow-md mb-6 flex flex-wrap gap-4">
+        <input
+          type="text"
+          placeholder="Search gigs..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="border px-3 py-2 rounded-lg w-full md:w-1/4"
+        />
+        <input
+          type="text"
+          placeholder="Location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="border px-3 py-2 rounded-lg w-full md:w-1/4"
+        />
+        <input
+          type="number"
+          placeholder="Min Budget"
+          value={minBudget}
+          onChange={(e) => setMinBudget(e.target.value)}
+          className="border px-3 py-2 rounded-lg w-full md:w-1/4"
+        />
+        <input
+          type="number"
+          placeholder="Max Budget"
+          value={maxBudget}
+          onChange={(e) => setMaxBudget(e.target.value)}
+          className="border px-3 py-2 rounded-lg w-full md:w-1/4"
+        />
+        <button
+          onClick={fetchGigs}
+          className="px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800 transition"
+        >
+          Apply Filters
+        </button>
+      </div>
+
+      {/* Gigs List */}
+      {gigs.length === 0 ? (
         <p className="text-center text-gray-500">No gigs found.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredGigs.map((gig) => {
-            const alreadyApplied = gig.appliedFreelancers?.includes(user?._id);
+          {gigs.map((gig) => {
+            const alreadyApplied = gig.appliedFreelancers?.some(
+  (id) => id.toString() === user?._id.toString()
+);
+            console.log(alreadyApplied)
 
             return (
               <div

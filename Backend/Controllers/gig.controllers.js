@@ -64,12 +64,17 @@ const getAllGig = async (req, res) => {
       if (maxBudget) filter.budget.$lte = Number(maxBudget);
     }
 
-    const gigs = await Gig.find(filter).populate("client", "name email");
+    const gigs = await Gig.find(filter)
+      .populate("client", "name email")
+      // .populate("appliedFreelancers", "_id name email")
+      .select("title description skillsRequired budget location appliedFreelancers"); // 👈 Important
+
     res.json(gigs);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 // Update gig
 const updateGig = async (req, res) => {
@@ -106,32 +111,43 @@ const deleteGig = async (req, res) => {
 };
 
 // Apply to gig
-const applyToGig = async (req, res) => {
-  try {
-    const gig = await Gig.findById(req.params.id);
-    if (!gig) return res.status(404).json({ message: "Gig not found" });
 
-    // Prevent crash from malformed data
-    const alreadyApplied = gig.appliedFreelancers.find(
-      (a) => a.user && a.user.toString() === req.user._id.toString()
+
+const applyGig = async (req, res) => {
+  try {
+    const { gigId } = req.params;
+    const freelancerId = req.user._id; // from auth middleware
+
+    // ✅ Validate ID format
+    if (!mongoose.Types.ObjectId.isValid(gigId)) {
+      return res.status(400).json({ message: "Invalid Gig ID format" });
+    }
+
+    const gig = await Gig.findById(gigId);
+    if (!gig) {
+      return res.status(404).json({ message: "Gig not found" });
+    }
+
+    // ✅ Convert ObjectIds to strings for comparison
+    const alreadyApplied = gig.appliedFreelancers.some(
+      (id) => id.toString() === freelancerId.toString()
     );
 
     if (alreadyApplied) {
-      return res.status(400).json({ message: "You already applied to this gig" });
+      return res.status(400).json({ message: "Already applied" });
     }
 
-    gig.appliedFreelancers.push({
-      user: req.user._id,
-      status: "Pending",
-    });
-
+    // ✅ Push freelancer ID
+    gig.appliedFreelancers.push(freelancerId);
     await gig.save();
-    res.json({ message: "Applied successfully", gig });
+
+    res.status(200).json({ message: "Applied successfully", gig });
   } catch (err) {
-    console.error("Error in applyToGig:", err);
-    res.status(500).json({ message: err.message });
+    console.error("Apply Gig Error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
+
 
 
 const getMyApplications = async (req, res) => {
@@ -351,7 +367,7 @@ export {
   updateGig,
   getAllGig,
   deleteGig,
-  applyToGig,
+  applyGig,
   getMyApplications,
   getGig,
   getMyGigs,
