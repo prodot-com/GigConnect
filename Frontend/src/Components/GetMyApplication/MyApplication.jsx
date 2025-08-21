@@ -92,6 +92,14 @@ const MyApplications = () => {
               <p className="text-gray-600 mt-2">
                 <strong>Client:</strong> {gig.client?.name} ({gig.client?.email})
               </p>
+              
+  <button
+    onClick={() => navigate(`/gig/${gig._id}/chat`)}
+    className="w-full bg-gray-700 text-white py-2 rounded-lg hover:bg-gray-800 transition"
+  >
+    Open Chat Room
+  </button>
+
 
               {/* ✅ Show Status */}
               <p

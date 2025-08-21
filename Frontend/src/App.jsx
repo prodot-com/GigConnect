@@ -5,12 +5,13 @@ import ClientDashboard from './Components/Dashboard/ClientDashboard'
 import FreeDashboard from './Components/Dashboard/FreeDashboard'
 import CreateGig from './Components/CreateGig/CreateGig'
 import MyGigs from './Components/MyGigs.jsx/MyGigs'
-import AllGigs from './Components/Allgigs.jsx/AllGigs'
+import AllGigs from './Components/Allgigs.jsx/BrowseGigs'
 import FreelancerProfile from './Components/FreeProfile/FreeProfile'
 import MyApplications from './Components/GetMyApplication/MyApplication'
 import GigDetails from './Components/GigDetails/GigDetails'
 import ViewApplications from './Components/VeiwApplication/VeiwApplication'
 import GigChat from './Components/Gigchat/GigChat'
+import BrowseGigs from './Components/Allgigs.jsx/BrowseGigs'
 
 const App = () => {
   return (
@@ -21,7 +22,7 @@ const App = () => {
           <Route path='/freelancer-dashboard' element={<FreeDashboard/>} />
           <Route path='/create-gig' element={<CreateGig/>} />
           <Route path='/my-gig' element={<MyGigs/>} />
-          <Route path="/all-gigs" element={<AllGigs/>} />
+          <Route path="/all-gigs" element={<BrowseGigs/>} />
           <Route path="/freelancer-profile" element={<FreelancerProfile />} />
           <Route path="/my-applications" element={<MyApplications />} />
           <Route path="/gig/:id" element={<GigDetails />} />

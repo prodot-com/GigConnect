@@ -1,278 +1,208 @@
-import React, { useEffect } from 'react'
-import { useState } from 'react';
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { Search, Users, ShieldCheck, Star, Copyright } from "lucide-react";
+import GigConnect_logo from '../../assets/GigConnect_logo.png'
 
 const Home = () => {
-    const [form, setForm] = useState({ name: "",email: "", password: "", portfolio: "", role: "", skills: []});
-    const [showSignin, setShowSignin] = useState(false)
-    const [showSignup, setShowSignup] = useState(false)
-    const [Alert, setAlert ] = useState('')
-    
-    const navigate = useNavigate()
-
+    const [form, setForm] = useState({ name: "", email: "", password: "", portfolio: "", role: "", skills: [] });
+    const [showSignin, setShowSignin] = useState(false);
+    const [showSignup, setShowSignup] = useState(false);
+    const [Alert, setAlert] = useState("");
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    if (name === "skills") {
-        
-
-        setForm({ ...form, skills: value.split(",").map(skill => skill.trim()) });
-    } else {
+        const { name, value } = e.target;
+        if (name === "skills") {
+            setForm({ ...form, skills: value.split(",").map((skill) => skill.trim()) });
+        } else {
         setForm({ ...form, [name]: value });
-    }
-};
-
-    useEffect(()=>{
-        setAlert('')
-    },[form])
-
-    const handleSignUp = async (e)=>{
-        e.preventDefault()
-        try {
-            console.log("Submitting form:", form);
-            const res = await axios.post("http://localhost:9000/api/auth/register",
-                form
-            )
-
-            // console.log(res)
-            setAlert(res.data.message)
-
-        } catch (error) {
-            setAlert(error.response.data.message)
         }
-    }
+    };
 
+    useEffect(() => {
+        setAlert("");
+    }, [form]);
 
-    const handleSignIn = async (e)=>{
-
-        e.preventDefault()
-
+    const handleSignUp = async (e) => {
+        e.preventDefault();
         try {
-        
-            // console.log('SignIn Form:', form  )
-            const res = await axios.post("http://localhost:9000/api/auth/login",
-                {
-                    email: form.email,
-                    password: form.password
-                }
-            )
-
-            localStorage.setItem("token", res.data.token);
-            localStorage.setItem("userDetails", JSON.stringify(res.data.user));
-
-            // console.log(res.data)
-            setAlert(res.data.message)
-
-            setTimeout(()=>{
-                if(res.data.user.role === "Client"){
-                    navigate('/client')
-                }
-                else navigate('/freelancer-dashboard')
-            },3000)
-
+            const res = await axios.post("http://localhost:9000/api/auth/register", form);
+            setAlert(res.data.message);
         } catch (error) {
-            console.log(error)
-            setAlert('Login failed, Check credentials')
+            setAlert(error.response?.data?.message || "Something went wrong");
         }
+    };
 
+    const handleSignIn = async (e) => {
+        e.preventDefault();
+    try {
+      const res = await axios.post("http://localhost:9000/api/auth/login", {
+        email: form.email,
+        password: form.password,
+      });
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userDetails", JSON.stringify(res.data.user));
+      setAlert(res.data.message);
+
+      setTimeout(() => {
+        if (res.data.user.role === "Client") {
+          navigate("/client");
+        } else {
+          navigate("/freelancer-dashboard");
+        }
+      }, 2000);
+    } catch (error) {
+      setAlert("Login failed, check credentials");
     }
+  };
 
-    return (
-    <div className='font-mono '>
-        <div className="flex justify-between items-center px-6 py-4 shadow-md">
-        <h2 className="text-3xl font-bold">GigConnect</h2>
-
+  return (
+    <div className="font-mono min-h-screen bg-gray-100 flex flex-col">
+        <nav className="w-full bg-gray-100 border-b-4 border-black  py-4 flex justify-between items-center">
+        <h1 className="text-4xl flex font-extrabold items-center text-indigo-700">
+            <img src={GigConnect_logo} alt="logo" className="h-15 w-auto "/>GigConnect</h1>
         <div className="space-x-4">
-            <button onClick={()=>setShowSignin(!showSignin)} className="px-4 py-2 cursor-pointer bg-indigo-700 text-white rounded-lg hover:bg-blue-600">
-            Login
-            </button>
-            <button onClick={()=>{
-                setShowSignin(false),
-                setShowSignup(!showSignup)
-            }} className="px-4 py-2 bg-green-500 text-white rounded-lg cursor-pointer hover:bg-green-600">
-            Sign Up
-            </button>
-        </div>
-        </div>
-        
-        {showSignin ? (<div className="flex h-screen items-center justify-center bg-gray-100">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-        <h2 className="text-2xl font-bold text-center text-gray-800">Sign In</h2>
-        <p className="text-center text-gray-500 mb-6">Welcome back to GigConnect</p>
-
-        <form onSubmit={handleSignIn} className="space-y-4">
-            <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="you@example.com"
-            />
-            </div>
-
-            <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="********"
-            />
-            </div>
-
-
             <button
-            type="submit"
-            className="w-full cursor-pointer bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-            >
-            Sign In
-            </button>
-
-            <div className="flex justify-center mt-6 text-xl font-medium text-blue-800">
-            <h2>{Alert}</h2>
-        </div>
-        </form>
-
-        {/* <p className="text-sm text-center text-gray-500 mt-6">
-            Don’t have an account?{" "}
-            <a href="/register" className="text-blue-600 hover:underline">
+                onClick={() => {
+                setShowSignin(!showSignin);
+                setShowSignup(false);
+            }}
+            className="px-5 py-2 border-2 border-black bg-green-400 hover:bg-green-500 font-bold"
+          >
+            Login
+          </button>
+          <button
+            onClick={() => {
+              setShowSignup(!showSignup);
+              setShowSignin(false);
+            }}
+            className="px-5 mr-4 py-2 border-2 border-black bg-yellow-300 hover:bg-yellow-400 font-bold"
+          >
             Sign Up
-            </a>
-        </p> */}
+          </button>
         </div>
-    </div>) : showSignup? (<div className="flex h-screen items-center justify-center bg-gray-100">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-        <h2 className="text-2xl font-bold text-center text-gray-800">Sign Up</h2>
-        <p className="text-center text-gray-500 mb-6">Welcome to GigConnect</p>
-
-        <form onSubmit={handleSignUp} className="space-y-4">
-
-            <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
-            <input
-                type="name"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="you@example.com"
-            />
+      </nav>
+    
+      <div className="flex-1 p-10">
+        {!showSignin && !showSignup && (
+          <div className="text-center space-y-8">
+            <h1 className="text-4xl font-bold text-indigo-700">Welcome to GigConnect</h1>
+            <div className="flex justify-center items-center">
+                <p className="font-extrabold text-xl mr-2">A hyperlocal freelance marketplace</p>
+            <p> to connect clients and freelancers in your community.</p>
             </div>
+            <p className="text-lg">Get started by registering or logging in.</p>
 
-            <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input
+
+            <section className="mt-16">
+              <h2 className="text-3xl font-bold mb-10">Why Choose GigConnect?</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="p-6 border-2 border-black  bg-gray-300 hover:shadow-lg transition">
+                  <Search className="text-blue-600 w-10 h-10 mx-auto mb-4" />
+                  <h3 className="font-bold text-lg mb-2">Easy Discovery</h3>
+                  <p className="text-gray-600 text-sm">
+                    Find the perfect freelancer for your project with our advanced search and filtering system.
+                  </p>
+                </div>
+                <div className="p-6 border-2 border-black  bg-gray-300 hover:shadow-lg transition">
+                  <Users className="text-blue-600 w-10 h-10 mx-auto mb-4" />
+                  <h3 className="font-bold text-lg mb-2">Local Focus</h3>
+                  <p className="text-gray-600 text-sm">
+                    Connect with talented professionals in your local area for better collaboration.
+                  </p>
+                </div>
+                <div className="p-6 border-2 border-black  bg-gray-300 hover:shadow-lg transition">
+                  <ShieldCheck className="text-blue-600 w-10 h-10 mx-auto mb-4" />
+                  <h3 className="font-bold text-lg mb-2">Secure Platform</h3>
+                  <p className="text-gray-600 text-sm">
+                    Built-in messaging, secure payments, and verified profiles ensure safe transactions.
+                  </p>
+                </div>
+                <div className="p-6 border-2 border-black  bg-gray-300 hover:shadow-lg transition">
+                  <Star className="text-blue-600 w-10 h-10 mx-auto mb-4" />
+                  <h3 className="font-bold text-lg mb-2">Quality Assurance</h3>
+                  <p className="text-gray-600 text-sm">
+                    Review and rating system helps you make informed decisions and build trust.
+                  </p>
+                </div>
+
+              </div>
+            </section>
+            <section className="bg-gray-200 border-2 hover:shadow-lg transition">
+                <div className="p-15 flex flex-col 
+                justify-center items-center space-y-4 ">
+                    <h1 className="font-extrabold text-4xl">Ready to get started?</h1>
+                    <p className="text-amber-600 font-bold p-3">Join other professionals already using GigConnect to grow.</p>
+                    <button onClick={()=>{
+                        setShowSignup(true)
+                    }} className="bg-amber-300 p-3 border-2 border-black text-center
+                    font-bold hover:bg-amber-400 ">
+                        Get Started
+                    </button>
+                </div>
+            </section>
+          </div>
+        )}
+
+        {showSignin && (
+          <div className="border-4 border-black bg-white p-8 max-w-lg mx-auto mt-10">
+            <h2 className="text-2xl font-bold mb-4">Sign In</h2>
+            <form onSubmit={handleSignIn} className="space-y-4">
+              <input
                 type="email"
                 name="email"
                 value={form.email}
                 onChange={handleChange}
-                required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="you@example.com"
-            />
-            </div>
-
-
-            <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
-            <input
+                placeholder="Email"
+                className="w-full border-2 border-black px-4 py-2"
+              />
+              <input
                 type="password"
                 name="password"
                 value={form.password}
                 onChange={handleChange}
-                required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="********"
-            />
-            </div>
+                placeholder="Password"
+                className="w-full border-2 border-black px-4 py-2"
+              />
+              <button type="submit" className="w-full bg-orange-400 border-2 border-black py-2 font-bold hover:bg-orange-500">
+                Sign In
+              </button>
+              {Alert && <p className="text-center text-red-600 font-bold">{Alert}</p>}
+            </form>
+          </div>
+        )}
 
-            <div>
-            <label className="block text-sm font-medium text-gray-700">Portfolio</label>
-            <input
-                type="portfolio"
-                name="portfolio"
-                value={form.portfolio}
-                onChange={handleChange}
-                required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="you@example.com"
-            />
-            </div>
-
-            <div>
-            <label className="block text-sm font-medium text-gray-700">Role</label>
-            <select
-                name="role"
-                value={form.role}
-                onChange={handleChange}
-                required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-            >
-                <option value="">Select a role</option>
+        {showSignup && (
+          <div className="border-4 border-black bg-white p-8 max-w-lg mx-auto mt-10">
+            <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
+            <form onSubmit={handleSignUp} className="space-y-4">
+              <input type="text" name="name" value={form.name} onChange={handleChange} placeholder="Name" className="w-full border-2 border-black px-4 py-2" />
+              <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="Email" className="w-full border-2 border-black px-4 py-2" />
+              <input type="password" name="password" value={form.password} onChange={handleChange} placeholder="Password" className="w-full border-2 border-black px-4 py-2" />
+              <input type="url" name="portfolio" value={form.portfolio} onChange={handleChange} placeholder="Portfolio link" className="w-full border-2 border-black px-4 py-2" />
+              <select name="role" value={form.role} onChange={handleChange} className="w-full border-2 border-black px-4 py-2">
+                <option value="">Select Role</option>
                 <option value="Client">Client</option>
                 <option value="Freelancer">Freelancer</option>
-            </select>
-</div>
-
-
-            <div>
-            <label className="block text-sm font-medium text-gray-700">Skills</label>
-            <input
-                type="skills"
-                name="skills"
-                value={form.skills}
-                onChange={handleChange}
-                required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="you@example.com"
-            />
-            </div>
-
-            <button
-            type="submit"
-            className="w-full cursor-pointer bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-            >
-            Sign Up
-            </button>
-        </form>
-
-        <div className="flex justify-center mt-6 text-xl font-medium text-blue-700">
-            <h2>{Alert}</h2>
+              </select>
+              <input type="text" name="skills" value={form.skills} onChange={handleChange} placeholder="Skills (comma separated)" className="w-full border-2 border-black px-4 py-2" />
+              <button type="submit" className="w-full bg-teal-400 border-2 border-black py-2 font-bold hover:bg-teal-500">
+                Sign Up
+              </button>
+              {Alert && <p className="text-center text-green-600 font-bold">{Alert}</p>}
+            </form>
+          </div>
+        )}
+      </div>
+      
+        <div className="flex items-center justify-center 
+        border-t-4 border-black font-bold text-xl bg-gray-300">
+            <Copyright />
+            <p className="p-9 pl-0">2025 GigConnect. All rights reserved.</p>
         </div>
-
-        {/* <p className="text-sm text-center text-gray-500 mt-6">
-            Already have an account?{" "}
-            <a onClick={()=>{
-                setShowSignup(false),
-                setShowSignin(true)
-            }} className="text-blue-600 hover:underline">
-            Sign In
-            </a>
-        </p> */}
-        </div>
-    </div>)
-    :
-        (<div>
-            <div className='flex flex-col mt-28
-            items-center h-screen space-y-5 text-center'>
-            <h1 className='text-3xl font-bold pb-7 text-indigo-700'>Welcome to GigConnect</h1>
-            <p className='text-2xl'>A hyperlocal freelance marketplace to connect clients and freelancers in your community.</p>
-            <p className='text-2xl'>Get started by Registering or Logging in.</p>
-            </div>
-        </div>
-    )}
     </div>
-    )
-}
+  );
+};
 
-export default Home
+export default Home;

@@ -62,7 +62,6 @@ const GigChat = () => {
     socket.emit("join_room", gigId);
 
     socket.on("receive_message", (msg) => {
-      // if 1:1 mode and message receiver doesn't match, still show broadcast (receiver null)
       if (toUserId) {
         if (msg.receiver === null || msg.sender?._id === toUserId || msg.sender === toUserId) {
           setMessages((prev) => [...prev, msg]);
@@ -120,12 +119,12 @@ const GigChat = () => {
         >
           GigConnect — Chat
         </h2>
-        <button
-          className="px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800"
-          onClick={() => navigate(`/gig/${gigId}`)}
-        >
-          Back to Gig
-        </button>
+          <button
+            onClick={() => navigate("/freelancer-dashboard")}
+            className="px-4 py-2 cursor-pointer bg-indigo-700 text-white rounded-lg hover:bg-blue-600"
+          >
+            Dashboard
+          </button>
       </div>
 
       {/* Chat area */}

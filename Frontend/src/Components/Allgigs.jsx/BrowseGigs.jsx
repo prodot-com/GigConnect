@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 
 const BrowseGigs = () => {
   const [gigs, setGigs] = useState([]);
+  const [filteredGigs, setFilteredGigs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState("");
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem("userDetails")); // Logged in user
@@ -15,6 +17,7 @@ const BrowseGigs = () => {
       try {
         const { data } = await axios.get("http://localhost:9000/api/gigs");
         setGigs(data);
+        setFilteredGigs(data); // initially show all gigs
       } catch (error) {
         console.error("Error fetching gigs:", error);
         setAlert("Failed to load gigs");
@@ -24,6 +27,30 @@ const BrowseGigs = () => {
     };
     fetchGigs();
   }, []);
+
+  // Search filter logic
+  useEffect(() => {
+    if (!search.trim()) {
+      setFilteredGigs(gigs);
+      return;
+    }
+
+    const lower = search.toLowerCase();
+    const filtered = gigs.filter((gig) => {
+      const skills = Array.isArray(gig.skillsRequired)
+        ? gig.skillsRequired.join(", ")
+        : gig.skillsRequired;
+
+      return (
+        gig.title?.toLowerCase().includes(lower) ||
+        gig.description?.toLowerCase().includes(lower) ||
+        gig.location?.toLowerCase().includes(lower) ||
+        skills?.toLowerCase().includes(lower)
+      );
+    });
+
+    setFilteredGigs(filtered);
+  }, [search, gigs]);
 
   const handleApply = async (gigId) => {
     try {
@@ -36,14 +63,12 @@ const BrowseGigs = () => {
       const res = await axios.post(
         `http://localhost:9000/api/gigs/${gigId}/apply`,
         {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setAlert(res.data.message || "Applied successfully!");
 
-      // Refresh gigs after apply
+      // Update UI
       const updated = gigs.map((g) =>
         g._id === gigId
           ? { ...g, appliedFreelancers: [...g.appliedFreelancers, user._id] }
@@ -62,8 +87,18 @@ const BrowseGigs = () => {
   return (
     <div className="px-6 py-4 min-h-screen bg-gray-50">
       {/* Top Bar */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <h2 className="text-3xl font-bold">Browse Gigs</h2>
+
+        {/* Search Bar */}
+        <input
+          type="text"
+          placeholder="Search gigs by title, skills, location..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full md:w-1/2 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+
         <button
           onClick={() => navigate("/freelancer-dashboard")}
           className="px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800 transition"
@@ -76,11 +111,11 @@ const BrowseGigs = () => {
         <p className="text-center text-red-600 font-semibold mb-4">{alert}</p>
       )}
 
-      {gigs.length === 0 ? (
+      {filteredGigs.length === 0 ? (
         <p className="text-center text-gray-500">No gigs found.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {gigs.map((gig) => {
+          {filteredGigs.map((gig) => {
             const alreadyApplied = gig.appliedFreelancers?.includes(user?._id);
 
             return (
