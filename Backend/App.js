@@ -3,7 +3,7 @@ import cors from 'cors';
 import userRoutes from './Routes/users.route.js';
 import gigRoutes from './Routes/gigs.route.js';
 import authRoutes from './Routes/auth.route.js';
-import chatRoutes from './Routes/chat.routes.js'
+import messageRoutes from './Routes/message.route.js'
 
 
 const app = express();
@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/gigs', gigRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/chat',chatRoutes);
+app.use('/api/messages', messageRoutes);
 
 
 

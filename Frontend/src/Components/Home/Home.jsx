@@ -37,7 +37,7 @@ const Home = () => {
     const handleSignIn = async (e) => {
         e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:9000/api/auth/login", {
+      const res = await axios.post("https://gigconnect-sq1z.onrender.com/api/auth/login", {
         email: form.email,
         password: form.password,
       });

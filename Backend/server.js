@@ -1,108 +1,77 @@
-// index.js
+// server.js
 import 'dotenv/config';
 import connect_db from "./src/db/Index.js";
 import { app } from "./App.js";
-import { createServer } from "http";
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
-import { Message } from "./models/Message.model.js";
+import { Message } from './models/Message.model.js';
 
 const PORT = process.env.PORT || 9000;
 
-const httpServer = createServer(app);
+const server = app.listen(PORT, () => {
+  console.log(`App + Socket.IO listening at port ${PORT}`);
+});
 
-// ————— Socket.IO setup —————
-const io = new Server(httpServer, {
+const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",
     credentials: true,
-    methods: ["GET", "POST"]
-  }
+  },
 });
 
-// Keep track of online users
-const onlineUsers = new Map();
-
-// Authenticate socket connection with JWT (sent via auth.token)
 io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+  if (!token) return next(new Error("Authentication error: No token provided"));
+
   try {
-    const token = socket.handshake.auth?.token;
-    if (!token) return next(new Error("No token"));
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    socket.user = { _id: decoded.id || decoded._id };
-    return next();
-  } catch (e) {
-    return next(new Error("Invalid token"));
+    socket.user = decoded;
+    next();
+  } catch (err) {
+    next(new Error("Authentication error: Invalid token"));
   }
 });
 
 io.on("connection", (socket) => {
-  const userId = socket.user?._id?.toString();
-  if (userId) {
-    onlineUsers.set(userId, socket.id);
-  }
+  console.log(`User ${socket.user.id} connected`);
 
-  // Join a gig chat room (roomId = gigId)
-  socket.on("join_room", (roomId) => {
-    if (!roomId) return;
-    socket.join(roomId);
+  socket.on("joinGigChat", (gigId) => {
+    socket.join(`gig-${gigId}`);
+    console.log(`User ${socket.user.id} joined room gig-${gigId}`);
   });
 
-  /**
-   * payload = {
-   *   roomId: <gigId>,
-   *   text: string,
-   *   toUserId: <receiver user id>,
-   *   gigId: <gigId>  // duplicate of roomId (for persistence)
-   * }
-   */
-  socket.on("send_message", async (payload) => {
+  socket.on("sendMessage", async ({ gigId, message }) => {
     try {
-      const { roomId, text, toUserId, gigId } = payload || {};
-      if (!roomId || !text || !gigId) return;
-
-      // Persist in DB
-      const msg = await Message.create({
-        gig: gigId,
-        sender: socket.user._id,
-        receiver: toUserId || null,
-        text
-      });
-
-      const out = {
-        _id: msg._id,
-        gig: gigId,
-        sender: socket.user._id,
-        receiver: toUserId || null,
-        text,
-        createdAt: msg.createdAt
+      const chatMessage = {
+        gigId,
+        sender: socket.user.id,
+        content: message,
+        timestamp: new Date(),
       };
 
-      // Emit to room (gig room)
-      io.to(roomId).emit("receive_message", out);
+      // Broadcast message to the gig room
+      io.to(`gig-${gigId}`).emit("receiveMessage", {
+        sender: socket.user.id,
+        content: message,
+        timestamp: chatMessage.timestamp,
+      });
 
-      // Optional: direct notify receiver if online (badge/preview)
-      const toSock = toUserId ? onlineUsers.get(toUserId.toString()) : null;
-      if (toSock) {
-        io.to(toSock).emit("notify_message", out);
-      }
+      // Save to database
+      await Message.create(chatMessage); // Uncommented
     } catch (err) {
-      console.error("send_message error:", err.message);
+      console.error("Error sending message:", err);
     }
   });
 
   socket.on("disconnect", () => {
-    if (userId) onlineUsers.delete(userId);
+    console.log(`User ${socket.user.id} disconnected`);
   });
 });
 
-// ————— Start server after DB connects —————
 connect_db()
   .then(() => {
-    httpServer.listen(PORT, () => {
-      console.log(`App + Socket.IO listening at port ${PORT}`);
-    });
+    console.log("MongoDB connected successfully");
   })
   .catch((err) => {
-    console.log("Connection failed", err);
+    console.log("MongoDB connection failed", err);
   });

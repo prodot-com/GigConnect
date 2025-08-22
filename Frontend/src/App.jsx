@@ -10,8 +10,9 @@ import FreelancerProfile from './Components/FreeProfile/FreeProfile'
 import MyApplications from './Components/GetMyApplication/MyApplication'
 import GigDetails from './Components/GigDetails/GigDetails'
 import ViewApplications from './Components/VeiwApplication/VeiwApplication'
-import GigChat from './Components/Gigchat/GigChat'
+// import GigChat from './Components/Gigchat/GigChat'
 import BrowseGigs from './Components/Allgigs.jsx/BrowseGigs'
+import GigChat from './Components/Gigchat/GigChat'
 
 const App = () => {
   return (

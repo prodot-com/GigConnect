@@ -22,6 +22,7 @@ const MyApplications = () => {
         const res = await axios.get("http://localhost:9000/api/gigs/my-applications", {
           headers: { Authorization: `Bearer ${token}` },
         });
+        console.log(res.data)
         setGigs(res.data);
 
         // ✅ Get all reviews for this freelancer
@@ -102,7 +103,8 @@ const MyApplications = () => {
 
 
               {/* ✅ Show Status */}
-              <p
+              {gig.gig_status !== 'Completed'
+              ?(<p
                 className={`mt-3 font-bold ${
                   gig.status === "Accepted"
                     ? "text-green-600"
@@ -112,7 +114,10 @@ const MyApplications = () => {
                 }`}
               >
                 {gig.status}
-              </p>
+              </p>):("")}
+              {gig.gig_status === 'Completed'?(<p className="mt-3 font-bold text-amber-600">
+                  {gig.gig_status}
+              </p>):(" ")}
 
               {/* ✅ If this gig has reviews */}
               {gig.review ? (

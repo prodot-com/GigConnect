@@ -24,7 +24,7 @@ const gigSchema = new mongoose.Schema(
         user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         status: {
           type: String,
-          enum: ["Pending", "Accepted", "Rejected"],
+          enum: ["Pending", "Accepted", "Rejected", "Completed"],
           default: "Pending",
         },
       },

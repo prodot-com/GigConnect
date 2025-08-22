@@ -1,3 +1,4 @@
+// src/Components/BrowseGigs.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -12,17 +13,18 @@ const BrowseGigs = () => {
   const [maxBudget, setMaxBudget] = useState("");
 
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("userDetails")); // Logged in user
+  const user = JSON.parse(localStorage.getItem("userDetails")); // Logged-in user
 
   useEffect(() => {
     fetchGigs();
-  }, []);
+  }, [search, location, minBudget, maxBudget]);
 
   const fetchGigs = async () => {
     try {
       const { data } = await axios.get("http://localhost:9000/api/gigs", {
         params: { search, location, minBudget, maxBudget },
       });
+      console.log("Fetched gigs:", data); // Debug
       setGigs(data);
     } catch (error) {
       console.error("Error fetching gigs:", error);
@@ -34,28 +36,29 @@ const BrowseGigs = () => {
 
   const handleApply = async (gigId) => {
     try {
+      if (!gigId || !/^[0-9a-fA-F]{24}$/.test(gigId)) {
+        setAlert("Invalid Gig ID format");
+        console.error("Invalid gigId:", gigId);
+        return;
+      }
+
       const token = localStorage.getItem("token");
       if (!token) {
         setAlert("Please login as Freelancer to apply");
         return;
       }
 
+      console.log("Applying to gigId:", gigId); // Debug
       const res = await axios.post(
-  `http://localhost:9000/api/gigs/${gigId}/apply`,
-  {},
-  { headers: { Authorization: `Bearer ${token}` } }
-);
+        `http://localhost:9000/api/gigs/${gigId}/apply`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
       setAlert(res.data.message || "Applied successfully!");
-
-      // Update frontend state without refresh
-      const updated = gigs.map((g) =>
-        g._id === gigId
-          ? { ...g, appliedFreelancers: [...(g.appliedFreelancers || []), user._id] }
-          : g
-      );
-      setGigs(updated);
+      await fetchGigs(); // Refetch to update appliedFreelancers
     } catch (err) {
+      console.error("Apply error:", err.response?.data || err);
       setAlert(err.response?.data?.message || "Failed to apply for gig");
     }
   };
@@ -127,9 +130,17 @@ const BrowseGigs = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {gigs.map((gig) => {
             const alreadyApplied = gig.appliedFreelancers?.some(
-  (id) => id.toString() === user?._id.toString()
-);
-            console.log(alreadyApplied)
+              (freelancer) =>
+                (freelancer.user?._id
+                  ? freelancer.user._id.toString()
+                  : freelancer.toString()) === user?._id.toString()
+            );
+            console.log(`Gig ${gig._id}:`, {
+              gigTitle: gig.title,
+              appliedFreelancers: gig.appliedFreelancers,
+              userId: user?._id,
+              alreadyApplied,
+            });
 
             return (
               <div

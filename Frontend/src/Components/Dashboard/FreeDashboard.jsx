@@ -57,16 +57,17 @@ const FreelancerDashboard = () => {
         </div>
       </nav>
       <div className="flex">
-        <div className="w-full md:w-1/4 bg-white shadow-lg p-6 sticky top-0 h-screen md:h-auto">
+        <div className="w-full md:w-1/4 bg-gray-50  p-6 sticky top-0 h-screen md:h-auto">
         <h2 className="text-2xl font-bold mb-6 text-indigo-600 tracking-tight">
           Freelancer-Dashboard
         </h2>
-        <ul className="space-y-3">
+        <div className="bg-white rounded-xl shadow-xl p-6 mb-8">
+          <ul className="space-y-7">
           
           <li>
             <button
               onClick={() => navigate("/all-gigs")}
-              className="w-full text-left px-4 py-3 bg-blue-600 text-white border-2 border-black cursor-pointer hover:bg-blue-700 transition-colors duration-200 shadow-sm"
+              className="w-full text-left px-4 py-3 hover:shadow-lg bg-blue-600 text-white border-2 border-black cursor-pointer hover:bg-blue-700 transition-colors duration-200 shadow-sm"
             >
               Browse Gigs
             </button>
@@ -74,13 +75,30 @@ const FreelancerDashboard = () => {
           <li>
             <button
               onClick={() => navigate("/my-applications")}
-              className="w-full text-left px-4 py-3 bg-green-600 text-white border-2 border-black cursor-pointer hover:bg-green-700 transition-colors duration-200 shadow-sm"
+              className="w-full text-left px-4 py-3 hover:shadow-lg bg-green-600 text-white border-2 border-black cursor-pointer hover:bg-green-700 transition-colors duration-200 shadow-sm"
             >
               My Applications
             </button>
           </li>
           
         </ul>
+        </div>
+
+        <div className="relative min-h-1/2 rounded-xl p-10 overflow-hidden flex items-center justify-center">
+  <div
+    className="absolute inset-0 opacity-60"
+    style={{
+      background:
+        'radial-gradient(1200px 600px at 0% 0%, #a78bfa33, transparent 60%), radial-gradient(800px 500px at 100% 0%, #60a5fa33, transparent 55%), radial-gradient(900px 500px at 100% 100%, #34d39933, transparent 55%), radial-gradient(700px 400px at 0% 100%, #f472b633, transparent 55%)'
+    }}
+  />
+  <div className="relative text-center">
+    <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+      "Connect. Work. Grow."
+    </h1>
+  </div>
+</div>
+
       </div>
 
       {/* Main Section */}
@@ -90,7 +108,7 @@ const FreelancerDashboard = () => {
         </h1>
 
         {/* Profile Card */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <div className="bg-white rounded-xl shadow-xl p-6 mb-8">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-semibold text-gray-800">{freelancer?.name}</h2>
             <button
@@ -103,12 +121,12 @@ const FreelancerDashboard = () => {
           <p className="text-gray-500 mt-2">{freelancer?.email}</p>
           <p className="text-gray-500">{freelancer?.location || "Location not set"}</p>
 
-          <div className="mt-6">
+          {/* <div className="mt-6">
             <h3 className="text-xl font-semibold text-indigo-700">About</h3>
             <p className="text-gray-700 mt-2 leading-relaxed">
               {freelancer?.bio || "No bio added yet."}
             </p>
-          </div>
+          </div> */}
 
           <div className="mt-6">
             <h3 className="text-xl font-semibold text-indigo-700">Skills</h3>
@@ -155,29 +173,28 @@ const FreelancerDashboard = () => {
         </div>
 
         {/* Dashboard Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex gap-6 w-full">
+  <div
+    className="flex-1 p-6 bg-gray-200 rounded-xl shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-200"
+    onClick={() => navigate("/all-gigs")}
+  >
+    <h3 className="text-xl font-semibold text-gray-800">Browse Gigs</h3>
+    <p className="text-gray-600 mt-2">
+      Explore available gigs and apply directly.
+    </p>
+  </div>
 
+  <div
+    className="flex-1 p-6 bg-gray-200 rounded-xl shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-200"
+    onClick={() => navigate("/my-applications")}
+  >
+    <h3 className="text-xl font-semibold text-gray-800">My Applications</h3>
+    <p className="text-gray-600 mt-2">
+      Track the gigs you’ve applied for.
+    </p>
+  </div>
+</div>
 
-          <div
-            className="p-6 bg-gray-200 rounded-xl shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-200"
-            onClick={() => navigate("/all-gigs")}
-          >
-            <h3 className="text-xl font-semibold text-gray-800">Browse Gigs</h3>
-            <p className="text-gray-600 mt-2">
-              Explore available gigs and apply directly.
-            </p>
-          </div>
-
-          <div
-            className="p-6 bg-gray-200 rounded-xl shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-200"
-            onClick={() => navigate("/my-applications")}
-          >
-            <h3 className="text-xl font-semibold text-gray-800">My Applications</h3>
-            <p className="text-gray-600 mt-2">
-              Track the gigs you’ve applied for.
-            </p>
-          </div>
-        </div>
       </div>
       </div>
     </div>

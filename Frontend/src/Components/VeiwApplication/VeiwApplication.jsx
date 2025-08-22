@@ -32,20 +32,50 @@ const ViewApplications = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
+  // const handleDecision = async (freelancerId, action) => {
+  //   try {
+  //     const res = await axios.post(
+  //       `http://localhost:9000/api/gigs/${id}/${action}/${freelancerId}`,
+  //       {},
+  //       { headers: { Authorization: `Bearer ${token}` } }
+  //     );
+  //     setAlert(res.data.message);
+  //     // update local gig snapshot
+  //     setGig(res.data.gig);
+  //   } catch (err) {
+  //     setAlert(err.response?.data?.message || "Error processing request");
+  //   }
+  // };
+
+
+
   const handleDecision = async (freelancerId, action) => {
-    try {
-      const res = await axios.post(
-        `http://localhost:9000/api/gigs/${id}/${action}/${freelancerId}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setAlert(res.data.message);
-      // update local gig snapshot
+  try {
+    const res = await axios.post(
+      `http://localhost:9000/api/gigs/${id}/${action}/${freelancerId}`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setAlert(res.data.message);
+
+    if (action === "reject") {
+      // remove rejected freelancer from local gig state
+      setGig((prev) => ({
+        ...prev,
+        appliedFreelancers: prev.appliedFreelancers.filter(
+          (app) =>
+            (app.user?._id || app.user).toString() !== freelancerId.toString()
+        ),
+      }));
+    } else {
+      // otherwise just update gig from backend response
       setGig(res.data.gig);
-    } catch (err) {
-      setAlert(err.response?.data?.message || "Error processing request");
     }
-  };
+  } catch (err) {
+    setAlert(err.response?.data?.message || "Error processing request");
+  }
+};
+
 
   const handleComplete = async () => {
     try {

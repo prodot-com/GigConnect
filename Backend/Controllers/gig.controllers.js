@@ -1,4 +1,5 @@
 import { Gig } from "../models/Gig.model.js";
+import mongoose  from "mongoose";
 
 // Create Gig
 const createGig = async (req, res) => {
@@ -35,12 +36,14 @@ const getGig = async (req, res) => {
 
     if (!gig) return res.status(404).json({ message: "Gig not found" });
     res.json(gig);
+    console.log(gig)
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
 // Get all gigs
+// src/Controllers/gig.controllers.js
 const getAllGig = async (req, res) => {
   try {
     const { search, location, minBudget, maxBudget } = req.query;
@@ -66,11 +69,13 @@ const getAllGig = async (req, res) => {
 
     const gigs = await Gig.find(filter)
       .populate("client", "name email")
-      // .populate("appliedFreelancers", "_id name email")
-      .select("title description skillsRequired budget location appliedFreelancers"); // 👈 Important
+      .populate("appliedFreelancers.user", "_id") // Populate user._id
+      .select("title description skillsRequired budget location appliedFreelancers");
 
+    console.log("Returning gigs:", gigs); // Debug
     res.json(gigs);
   } catch (err) {
+    console.error("Error in getAllGig:", err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -115,30 +120,29 @@ const deleteGig = async (req, res) => {
 
 const applyGig = async (req, res) => {
   try {
-    const { gigId } = req.params;
-    const freelancerId = req.user._id; // from auth middleware
+    const { id } = req.params; // 👈 use `id` instead of `gigId`
+    const freelancerId = req.user._id;
 
-    // ✅ Validate ID format
-    if (!mongoose.Types.ObjectId.isValid(gigId)) {
+    console.log("Applying user:", freelancerId, "to gig:", id); // Debug
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid Gig ID format" });
     }
 
-    const gig = await Gig.findById(gigId);
+    const gig = await Gig.findById(id);
     if (!gig) {
       return res.status(404).json({ message: "Gig not found" });
     }
 
-    // ✅ Convert ObjectIds to strings for comparison
     const alreadyApplied = gig.appliedFreelancers.some(
-      (id) => id.toString() === freelancerId.toString()
+      (a) => a.user.toString() === freelancerId.toString()
     );
 
     if (alreadyApplied) {
       return res.status(400).json({ message: "Already applied" });
     }
 
-    // ✅ Push freelancer ID
-    gig.appliedFreelancers.push(freelancerId);
+    gig.appliedFreelancers.push({ user: freelancerId });
     await gig.save();
 
     res.status(200).json({ message: "Applied successfully", gig });
@@ -147,6 +151,7 @@ const applyGig = async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
+
 
 
 
@@ -175,6 +180,7 @@ const getMyApplications = async (req, res) => {
         location: gig.location,
         client: gig.client,
         status: myApplication?.status || "Pending",
+        gig_status: gig.status,
         review: myReview
           ? {
               rating: myReview.rating,
@@ -185,6 +191,7 @@ const getMyApplications = async (req, res) => {
       };
     });
 
+    console.log(result)
     res.json(result);
   } catch (err) {
     console.error("Error in getMyApplications:", err.message);
@@ -258,31 +265,23 @@ const acceptApplication = async (req, res) => {
 };
 
 const rejectApplication = async (req, res) => {
-  try {
-    const { id, freelancerId } = req.params;
+  const { id, freelancerId } = req.params;
 
-    const gig = await Gig.findById(id).populate("appliedFreelancers.user", "_id name email");
+  try {
+    const gig = await Gig.findByIdAndUpdate(
+      id,
+      { $pull: { appliedFreelancers: { user: freelancerId } } }, // 👈 remove instead of mark rejected
+      { new: true }
+    );
+
     if (!gig) return res.status(404).json({ message: "Gig not found" });
 
-    const application = gig.appliedFreelancers.find((a) => {
-      if (!a.user) return false;
-      const userId = a.user._id ? a.user._id.toString() : a.user.toString();
-      return userId === freelancerId;
-    });
-
-    if (!application) {
-      return res.status(400).json({ message: "Freelancer did not apply" });
-    }
-
-    application.status = "Rejected";
-    await gig.save();
-
-    res.json({ message: "Freelancer rejected", gig });
+    res.json({ message: "Application rejected and removed", gig });
   } catch (err) {
-    console.error("Error in rejectApplication:", err);
     res.status(500).json({ message: err.message });
   }
 };
+
 
 
 
@@ -296,6 +295,8 @@ const completeGig = async (req, res) => {
     if (gig.client.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Not authorized" });
     }
+
+    
 
     gig.status = "Completed";
     await gig.save();
