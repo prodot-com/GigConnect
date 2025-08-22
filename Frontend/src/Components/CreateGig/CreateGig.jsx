@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import GigConnect_logo from '../../assets/GigConnect_logo.png';
+import { Copyright } from "lucide-react";
 
 const CreateGig = () => {
   const navigate = useNavigate();
-
-  const [Alert, setAlert] = useState('')
-
+  const [Alert, setAlert] = useState('');
   const [gig, setGig] = useState({
     client: "",
     title: "",
@@ -26,11 +26,9 @@ const CreateGig = () => {
     }
   }, [navigate]);
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-
+    setAlert('')
     if (name === "skillsRequired") {
       setGig({ ...gig, [name]: value.split(",").map((s) => s.trim()) });
     } else {
@@ -40,28 +38,17 @@ const CreateGig = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const token = localStorage.getItem("token");
-      console.log(token)
-
       const res = await axios.post(
         "http://localhost:9000/api/gigs",
         gig,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      if (res.data) {
-        setAlert("Gig created successfully");
-        // navigate("/client-dashboard");
-      }
+      if (res.data) setAlert("Gig created successfully");
     } catch (err) {
-      console.error(err);
-      setAlert("Error creating gig");
+      console.error(err.response.data.message);
+      setAlert(err.response.data.message);
     }
   };
 
@@ -72,49 +59,62 @@ const CreateGig = () => {
   };
 
   return (
-    <div className="">
-      <div className="flex justify-between items-center px-6 py-4 shadow-md bg-white">
-        <h2 className="text-3xl font-bold text-indigo-700">GigConnect</h2>
-        <button
-          onClick={logout}
-          className="px-4 py-2 cursor-pointer bg-indigo-700 text-white rounded-lg hover:bg-blue-600"
-        >
-          Logout
-        </button>
-      </div>
+    <div className="min-h-screen flex flex-col bg-gray-100 font-mono">
 
-      <div className="flex h-screen items-center justify-center bg-gray-100">
+      <nav className="w-full bg-gray-100 border-b-4 border-black cursor-pointer py-4 flex justify-between items-center px-6">
+        <h1 className="text-4xl flex font-extrabold items-center text-indigo-700">
+          <img src={GigConnect_logo} alt="logo" className="h-15 w-auto mr-2"/>
+          GigConnect
+        </h1>
+        <div className="space-x-7">
+          <button
+            onClick={() => navigate("/client")}
+            className="px-7 py-2 bg-indigo-700 text-white border-2 border-black hover:bg-indigo-800 transition"
+          >
+            Dashboard
+          </button>
+          <button
+            onClick={logout}
+            className="px-7 py-2 border-2 border-black cursor-pointer bg-green-400 hover:bg-green-500 font-bold"
+          >
+            Logout
+          </button>
+        </div>
+      </nav>
+
+      
+      <main className="flex-grow flex items-center justify-center py-12 px-6">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          <h2 className="text-2xl font-bold text-center text-indigo-700 mb-6">
             Create a Gig
           </h2>
 
+          {Alert && (
+              <p className="text-center mt-4 font-semibold text-green-700">{Alert}</p>
+            )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Title
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Title</label>
               <input
                 type="text"
                 name="title"
                 value={gig.title}
                 onChange={handleChange}
                 required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-700 outline-none"
                 placeholder="e.g. Website Development"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Description
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Description</label>
               <textarea
                 name="description"
                 value={gig.description}
                 onChange={handleChange}
                 required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-700 outline-none"
                 placeholder="Describe the gig..."
               />
             </div>
@@ -127,54 +127,54 @@ const CreateGig = () => {
                 type="text"
                 name="skillsRequired"
                 onChange={handleChange}
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-700 outline-none"
                 placeholder="React, Node.js, MongoDB"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Budget
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Budget</label>
               <input
                 type="number"
                 name="budget"
                 value={gig.budget}
                 onChange={handleChange}
                 required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-700 outline-none"
                 placeholder="500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Location
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Location</label>
               <input
                 type="text"
                 name="location"
                 value={gig.location}
                 onChange={handleChange}
                 required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-700 outline-none"
                 placeholder="Kolkata, India"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full cursor-pointer bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
+              className="w-full cursor-pointer bg-indigo-700 text-white py-2 rounded-lg hover:bg-indigo-800 transition"
             >
               Create Gig
             </button>
 
-            <div className="flex justify-center mt-6 text-xl font-medium text-blue-700">
-            <h2>{Alert}</h2>
-        </div>
+            
           </form>
         </div>
-      </div>
+      </main>
+
+      
+      <footer className="flex items-center justify-center border-t-2 border-black font-bold bg-gray-400 py-3 mt-6">
+        <Copyright />
+        <p className="p-2 pl-0">2025 GigConnect. All rights reserved.</p>
+      </footer>
     </div>
   );
 };
