@@ -16,7 +16,7 @@ const createGig = async (req, res) => {
       description,
       skillsRequired,
       budget,
-      location,
+      location
     });
 
     await gig.save();
@@ -31,7 +31,7 @@ const getGig = async (req, res) => {
   try {
     const gig = await Gig.findById(req.params.id)
       .populate("client", "name email")
-      .populate("appliedFreelancers.user", "name email skills portfolio rate")
+      .populate("appliedFreelancers.user", "name email skills portfolio rate status")
       .populate("assignedFreelancer", "name email skills portfolio rate");
 
     if (!gig) return res.status(404).json({ message: "Gig not found" });

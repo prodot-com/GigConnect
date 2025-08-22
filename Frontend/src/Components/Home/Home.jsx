@@ -180,7 +180,7 @@ const Home = () => {
               <input type="text" name="name" value={form.name} onChange={handleChange} placeholder="Name" className="w-full border-2 border-black px-4 py-2" />
               <input type="email" name="email" value={form.email} onChange={handleChange} placeholder="Email" className="w-full border-2 border-black px-4 py-2" />
               <input type="password" name="password" value={form.password} onChange={handleChange} placeholder="Password" className="w-full border-2 border-black px-4 py-2" />
-              <input type="url" name="portfolio" value={form.portfolio} onChange={handleChange} placeholder="Portfolio link" className="w-full border-2 border-black px-4 py-2" />
+              <input type="string" name="portfolio" value={form.portfolio} onChange={handleChange} placeholder="Portfolio link" className="w-full border-2 border-black px-4 py-2" />
               <select name="role" value={form.role} onChange={handleChange} className="w-full border-2 border-black px-4 py-2">
                 <option value="">Select Role</option>
                 <option value="Client">Client</option>

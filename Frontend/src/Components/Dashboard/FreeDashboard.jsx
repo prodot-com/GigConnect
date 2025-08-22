@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import GigConnect_logo from '../../assets/GigConnect_logo.png'
+import { Copyright } from "lucide-react";
 
 const FreelancerDashboard = () => {
   const navigate = useNavigate();
@@ -101,16 +102,14 @@ const FreelancerDashboard = () => {
 
       </div>
 
-      {/* Main Section */}
       <div className="flex-1 p-6 md:p-10">
         <h1 className="text-3xl md:text-4xl font-bold text-indigo-700 mb-6 tracking-tight">
           Welcome,{freelancer?.name} 👋
         </h1>
 
-        {/* Profile Card */}
         <div className="bg-white rounded-xl shadow-xl p-6 mb-8">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-semibold text-gray-800">{freelancer?.name}</h2>
+            <h2 className="text-3xl font-semibold text-gray-800">{freelancer?.name}</h2>
             <button
               onClick={() => navigate("/edit-freelancer-profile")}
               className="px-4 py-2 bg-indigo-600 text-white border-2 border-black cursor-pointer hover:bg-indigo-700 transition-colors duration-200 shadow-sm"
@@ -172,7 +171,7 @@ const FreelancerDashboard = () => {
           </div>
         </div>
 
-        {/* Dashboard Cards */}
+
         <div className="flex gap-6 w-full">
   <div
     className="flex-1 p-6 bg-gray-200 rounded-xl shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-200"
@@ -197,6 +196,11 @@ const FreelancerDashboard = () => {
 
       </div>
       </div>
+      <div className="flex items-center justify-center 
+        border-t-3 border-black font-bold bg-gray-400">
+            <Copyright />
+            <p className="p-2 pl-0">2025 GigConnect. All rights reserved.</p>
+        </div>
     </div>
   );
 };
