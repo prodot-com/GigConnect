@@ -137,7 +137,7 @@ const GigChat = () => {
 
      
       <main className="flex-grow container mx-auto p-4 sm:p-8">
-        <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-4 sm:p-6">
+        <div className="max-w-3xl mx-auto bg-white shadow-lg border-2 border-black p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6">
             <h2 className="text-2xl sm:text-3xl font-bold text-indigo-700">Chat for Gig</h2>
             {/* <div className="flex gap-2 mt-2 sm:mt-0">
@@ -155,7 +155,7 @@ const GigChat = () => {
               </button>
             </div> */}
           </div>
-          <div className="h-[60vh] sm:h-96 overflow-y-auto mb-4 p-4 bg-gray-50 rounded-lg">
+          <div className="h-[60vh] sm:h-96 overflow-y-auto mb-4 p-4 bg-gray-50 ">
             {messages.map((msg, index) => {
               const senderId =
                 typeof msg.sender === "object" && msg.sender && msg.sender._id
@@ -172,16 +172,16 @@ const GigChat = () => {
                   className={`mb-4 flex ${isOutgoing ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`w-[95%] sm:w-[90%] p-4 rounded-lg shadow-md ${
+                    className={`w-[100%] sm:w-[100%]  p-3 border-2 border-black shadow-md ${
                       isOutgoing
                         ? "bg-indigo-700 text-white rounded-br-none"
                         : "bg-green-200 text-green-900 rounded-bl-none"
                     }`}
                   >
-                    <p className="text-sm font-semibold">
+                    {/* <p className="text-sm font-semibold">
                       {isOutgoing ? "You" : msg.sender?.name || "Unknown"}
-                    </p>
-                    <p className="text-base mt-1">{msg.content}</p>
+                    </p> */}
+                    <p className="text-lg mt-1">{msg.content}</p>
                     <p
                       className={`text-xs ${
                         isOutgoing ? "text-gray-300" : "text-green-600"
@@ -201,11 +201,11 @@ const GigChat = () => {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Type a message..."
-              className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-700 text-sm sm:text-base"
+              className="flex-1 p-2 border-2 border-black focus:outline-none focus:ring-2 focus:ring-indigo-700 text-sm sm:text-base"
             />
             <button
               type="submit"
-              className="px-3 sm:px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800 text-sm sm:text-base"
+              className="px-3 sm:px-4 py-2 bg-indigo-700 text-white border-2 border-black hover:bg-indigo-800 text-sm sm:text-base"
             >
               Send
             </button>
