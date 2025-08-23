@@ -59,7 +59,19 @@ const CreateGig = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100 font-mono">
+
+    <div className="min-h-screen w-full relative bg-white">
+  {/* Soft Green Glow */}
+  <div
+    className="absolute inset-0 z-0"
+    style={{
+      backgroundImage: `
+        radial-gradient(circle at center, #8fffe5, transparent)
+      `,
+    }}
+  />
+     {/* Your Content/Components */}
+        <div className="relative z-10 min-h-screen flex flex-col font-mono">
 
       <nav className="w-full bg-gray-100 border-b-4 border-black cursor-pointer py-4 flex justify-between items-center px-6">
         <h1 className="text-4xl flex font-extrabold items-center text-indigo-700">
@@ -83,92 +95,84 @@ const CreateGig = () => {
       </nav>
 
       
-      <main className="flex-grow flex items-center justify-center py-12 px-6">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-2xl font-bold text-center text-indigo-700 mb-6">
-            Create a Gig
-          </h2>
+      <main className="flex-grow flex items-center justify-center">
+  <div className="w-[90%] max-w-6xl bg-white border-2 shadow-xl p-7">
+    <h2 className="text-2xl font-bold text-center text-indigo-700 mb-6">
+      Create a Gig
+    </h2>
 
-          {Alert && (
-              <p className="text-center mt-4 font-semibold text-green-700">{Alert}</p>
-            )}
+    {Alert && (
+      <p className="text-center mt-4 font-semibold text-green-700">{Alert}</p>
+    )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Title</label>
-              <input
-                type="text"
-                name="title"
-                value={gig.title}
-                onChange={handleChange}
-                required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-700 outline-none"
-                placeholder="e.g. Website Development"
-              />
-            </div>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Form Row */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {/* Title */}
+        <input
+          type="text"
+          name="title"
+          value={gig.title}
+          onChange={handleChange}
+          required
+          className="px-2 py-2 border focus:ring-2 focus:ring-indigo-700 outline-none"
+          placeholder="e.g. Website Development"
+        />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Description</label>
-              <textarea
-                name="description"
-                value={gig.description}
-                onChange={handleChange}
-                required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-700 outline-none"
-                placeholder="Describe the gig..."
-              />
-            </div>
+        {/* Location */}
+        <input
+          type="text"
+          name="location"
+          value={gig.location}
+          onChange={handleChange}
+          required
+          className="px-4 py-2 border  focus:ring-2 focus:ring-indigo-700 outline-none"
+          placeholder="Kolkata, India"
+        />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Skills Required (comma separated)
-              </label>
-              <input
-                type="text"
-                name="skillsRequired"
-                onChange={handleChange}
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-700 outline-none"
-                placeholder="React, Node.js, MongoDB"
-              />
-            </div>
+        {/* Budget */}
+        <input
+          type="number"
+          name="budget"
+          value={gig.budget}
+          onChange={handleChange}
+          required
+          className="px-4 py-2 border  focus:ring-2 focus:ring-indigo-700 outline-none"
+          placeholder="500"
+        />
+      </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Budget</label>
-              <input
-                type="number"
-                name="budget"
-                value={gig.budget}
-                onChange={handleChange}
-                required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-700 outline-none"
-                placeholder="500"
-              />
-            </div>
+      {/* Skills Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input
+          type="text"
+          name="skillsRequired"
+          onChange={handleChange}
+          className="px-4 py-2 border  focus:ring-2 focus:ring-indigo-700 outline-none"
+          placeholder="React, Node.js, MongoDB"
+        />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Location</label>
-              <input
-                type="text"
-                name="location"
-                value={gig.location}
-                onChange={handleChange}
-                required
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-700 outline-none"
-                placeholder="Kolkata, India"
-              />
-            </div>
+        <textarea
+          name="description"
+          value={gig.description}
+          onChange={handleChange}
+          required
+          className="px-4 py-2 border  focus:ring-2 focus:ring-indigo-700 outline-none"
+          placeholder="Describe the gig..."
+        />
+      </div>
 
-            <button
-              type="submit"
-              className="w-full cursor-pointer bg-indigo-700 text-white py-2 rounded-lg hover:bg-indigo-800 transition"
-            >
-              Create Gig
-            </button>
+      {/* Submit Button */}
+      <button
+        type="submit"
+        className="w-full cursor-pointer bg-indigo-700 text-white py-2 border-2 border-black hover:bg-indigo-800 transition"
+      >
+        Create Gig
+      </button>
+    </form>
+  </div>
+</main>
 
-            
-          </form>
-        </div>
-      </main>
 
       
       <footer className="flex items-center justify-center border-t-2 border-black font-bold bg-gray-400 py-3 mt-6">
@@ -176,6 +180,127 @@ const CreateGig = () => {
         <p className="p-2 pl-0">2025 GigConnect. All rights reserved.</p>
       </footer>
     </div>
+
+</div>
+
+
+    // <div className="min-h-screen flex flex-col bg-gray-100 font-mono">
+
+    //   <nav className="w-full bg-gray-100 border-b-4 border-black cursor-pointer py-4 flex justify-between items-center px-6">
+    //     <h1 className="text-4xl flex font-extrabold items-center text-indigo-700">
+    //       <img src={GigConnect_logo} alt="logo" className="h-15 w-auto mr-2"/>
+    //       GigConnect
+    //     </h1>
+    //     <div className="space-x-7">
+    //       <button
+    //         onClick={() => navigate("/client")}
+    //         className="px-7 py-2 bg-indigo-700 text-white border-2 border-black hover:bg-indigo-800 transition"
+    //       >
+    //         Dashboard
+    //       </button>
+    //       <button
+    //         onClick={logout}
+    //         className="px-7 py-2 border-2 border-black cursor-pointer bg-green-400 hover:bg-green-500 font-bold"
+    //       >
+    //         Logout
+    //       </button>
+    //     </div>
+    //   </nav>
+
+      
+    //   <main className="flex-grow flex items-center justify-center py-12 px-6">
+    //     <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+    //       <h2 className="text-2xl font-bold text-center text-indigo-700 mb-6">
+    //         Create a Gig
+    //       </h2>
+
+    //       {Alert && (
+    //           <p className="text-center mt-4 font-semibold text-green-700">{Alert}</p>
+    //         )}
+
+    //       <form onSubmit={handleSubmit} className="space-y-4">
+    //         <div>
+    //           <label className="block text-sm font-medium text-gray-700">Title</label>
+    //           <input
+    //             type="text"
+    //             name="title"
+    //             value={gig.title}
+    //             onChange={handleChange}
+    //             required
+    //             className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-700 outline-none"
+    //             placeholder="e.g. Website Development"
+    //           />
+    //         </div>
+
+    //         <div>
+    //           <label className="block text-sm font-medium text-gray-700">Description</label>
+    //           <textarea
+    //             name="description"
+    //             value={gig.description}
+    //             onChange={handleChange}
+    //             required
+    //             className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-700 outline-none"
+    //             placeholder="Describe the gig..."
+    //           />
+    //         </div>
+
+    //         <div>
+    //           <label className="block text-sm font-medium text-gray-700">
+    //             Skills Required (comma separated)
+    //           </label>
+    //           <input
+    //             type="text"
+    //             name="skillsRequired"
+    //             onChange={handleChange}
+    //             className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-700 outline-none"
+    //             placeholder="React, Node.js, MongoDB"
+    //           />
+    //         </div>
+
+    //         <div>
+    //           <label className="block text-sm font-medium text-gray-700">Budget</label>
+    //           <input
+    //             type="number"
+    //             name="budget"
+    //             value={gig.budget}
+    //             onChange={handleChange}
+    //             required
+    //             className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-700 outline-none"
+    //             placeholder="500"
+    //           />
+    //         </div>
+
+    //         <div>
+    //           <label className="block text-sm font-medium text-gray-700">Location</label>
+    //           <input
+    //             type="text"
+    //             name="location"
+    //             value={gig.location}
+    //             onChange={handleChange}
+    //             required
+    //             className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-700 outline-none"
+    //             placeholder="Kolkata, India"
+    //           />
+    //         </div>
+
+    //         <button
+    //           type="submit"
+    //           className="w-full cursor-pointer bg-indigo-700 text-white py-2 rounded-lg hover:bg-indigo-800 transition"
+    //         >
+    //           Create Gig
+    //         </button>
+
+            
+    //       </form>
+    //     </div>
+    //   </main>
+
+      
+    //   <footer className="flex items-center justify-center border-t-2 border-black font-bold bg-gray-400 py-3 mt-6">
+    //     <Copyright />
+    //     <p className="p-2 pl-0">2025 GigConnect. All rights reserved.</p>
+    //   </footer>
+    // </div>
   );
 };
 

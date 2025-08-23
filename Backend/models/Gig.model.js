@@ -42,9 +42,12 @@ const gigSchema = new mongoose.Schema(
       default: "Open",
     },
 
-    reviews: [reviewSchema], // 👈 added reviews array
+    isPaid: { type: Boolean, default: false },  // ✅ NEW
+
+    reviews: [reviewSchema],
   },
   { timestamps: true }
 );
+
 
 export const Gig = mongoose.model("Gig", gigSchema);

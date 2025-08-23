@@ -19,6 +19,7 @@ const GigChat = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userDetails = JSON.parse(localStorage.getItem("userDetails"));
+    console.log(userDetails)
 
     if (!token || !userDetails || !userDetails._id) {
       setError("Please log in to access the chat");
@@ -129,26 +130,37 @@ const GigChat = () => {
      {/* Your Content/Components */}
         <div className="relative z-10 flex flex-col min-h-screen font-mono">
       {/* Navbar */}
-      <nav className="w-full bg-gray-100 shadow-md border-b border-gray-200 py-4 px-6 flex justify-between items-center">
-        <h1 className="text-3xl flex font-extrabold items-center text-indigo-700 gap-2">
-          <img src={GigConnect_logo} alt="logo" className="h-12 w-auto" />
-          GigConnect
-        </h1>
-        <div className="space-x-4">
-          <button
-            onClick={() => navigate("/all-gigs")}
-            className="px-6 py-2 bg-indigo-700 text-white border-2  border-black hover:bg-indigo-800 transition"
-          >
-            Back to Gigs
-          </button>
-          <button
-            onClick={logout}
-            className="px-6 py-2 bg-green-500 text-white border-2  border-black hover:bg-green-600 font-bold"
-          >
-            Logout
-          </button>
-        </div>
-      </nav>
+<nav className="w-full bg-gray-100 shadow-md border-b border-gray-200 py-4 px-6 flex justify-between items-center">
+  <h1 className="text-3xl flex font-extrabold items-center text-indigo-700 gap-2">
+    <img src={GigConnect_logo} alt="logo" className="h-12 w-auto" />
+    GigConnect
+  </h1>
+  <div className="space-x-4">
+    {user?.role === "Client" ? (
+      <button
+        onClick={() => navigate(`/gig/${gigId}/applications`)}
+        className="px-6 py-2 bg-indigo-700 text-white border-2 border-black hover:bg-indigo-800 transition"
+      >
+        Applications
+      </button>
+    ) : (
+      <button
+        onClick={() => navigate("/my-applications")}
+        className="px-6 py-2 bg-indigo-700 text-white border-2 border-black hover:bg-indigo-800 transition"
+      >
+        My Applications
+      </button>
+    )}
+
+    <button
+      onClick={logout}
+      className="px-6 py-2 bg-green-500 text-white border-2 border-black hover:bg-green-600 font-bold"
+    >
+      Logout
+    </button>
+  </div>
+</nav>
+
 
       {/* Chat Section */}
       <main className="flex-grow container mx-auto p-4 sm:p-8">

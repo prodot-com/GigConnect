@@ -22,6 +22,7 @@ const MyApplications = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setGigs(res.data);
+        console.log(res.data)
 
         const user = JSON.parse(localStorage.getItem("userDetails"));
         if (user?._id) {
@@ -139,6 +140,16 @@ const MyApplications = () => {
                   <p className="text-gray-500 mt-2 italic">Waiting for client review...</p>
                 )
               )}
+
+              {gig.isPaid  && 
+              <div className="flex items-center justify-center">
+                <h2
+                className="mt-4 p-3 bg-indigo-700 text-white py-2 border-2 border-black"
+              >
+                Payment Received
+              </h2>
+              </div>
+              }
             </div>
           ))}
         </div>

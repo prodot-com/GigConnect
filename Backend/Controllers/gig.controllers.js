@@ -173,22 +173,24 @@ const getMyApplications = async (req, res) => {
       );
 
       return {
-        _id: gig._id,
-        title: gig.title,
-        description: gig.description,
-        budget: gig.budget,
-        location: gig.location,
-        client: gig.client,
-        status: myApplication?.status || "Pending",
-        gig_status: gig.status,
-        review: myReview
-          ? {
-              rating: myReview.rating,
-              comment: myReview.comment,
-              reviewer: myReview.client, // includes name/email
-            }
-          : null,
-      };
+  _id: gig._id,
+  title: gig.title,
+  description: gig.description,
+  budget: gig.budget,
+  location: gig.location,
+  client: gig.client,
+  status: myApplication?.status || "Pending",
+  gig_status: gig.status,
+  isPaid: gig.isPaid, 
+  review: myReview
+    ? {
+        rating: myReview.rating,
+        comment: myReview.comment,
+        reviewer: myReview.client,
+      }
+    : null,
+};
+
     });
 
     console.log(result)
