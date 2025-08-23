@@ -10,7 +10,7 @@ const razorpay = new Razorpay({
 const order = async (req, res) => {
   try {
     const options = {
-      amount: req.body.amount * 100, // amount in paise
+      amount: req.body.amount * 100, 
       currency: "INR",
       receipt: `gig_${req.body.gigId}_${Date.now()}`.slice(0, 40),
 
@@ -41,17 +41,16 @@ const verify_payment = async (req, res) => {
       .digest("hex");
 
     if (generated_signature === razorpay_signature) {
-      // ✅ Update DB and return updated gig
       const updatedGig = await Gig.findByIdAndUpdate(
         gigId,
         { isPaid: true },
-        { new: true } // return updated doc
+        { new: true } 
       );
 
       return res.json({
         success: true,
         message: "Payment verified successfully",
-        gig: updatedGig, // 🔥 send back updated gig
+        gig: updatedGig, 
       });
     } else {
       return res.status(400).json({

@@ -1,7 +1,7 @@
 import { User } from '../models/User.model.js';
 import bcrypt from 'bcrypt';
 
-// ✅ Logged-in user
+
 const loggedInUser = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('-password');
@@ -12,7 +12,7 @@ const loggedInUser = async (req, res) => {
   }
 };
 
-// ✅ Public freelancer profile
+
 const specificUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('-password');
@@ -23,16 +23,15 @@ const specificUser = async (req, res) => {
   }
 };
 
-// ✅ Update freelancer profile
+
 const updateUser = async (req, res) => {
   try {
     const updates = req.body;
 
-    // Prevent role/email change
+   
     delete updates.role;
     delete updates.email;
 
-    // Password hashing if updated
     if (updates.password) {
       const salt = await bcrypt.genSalt(10);
       updates.password = await bcrypt.hash(updates.password, salt);
@@ -45,7 +44,7 @@ const updateUser = async (req, res) => {
   }
 };
 
-// ✅ Get all freelancers
+
 const getAllFreelancer = async (req, res) => {
   try {
     const freelancers = await User.find({ role: 'Freelancer' }).select('-password');

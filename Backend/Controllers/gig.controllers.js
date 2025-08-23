@@ -1,7 +1,7 @@
 import { Gig } from "../models/Gig.model.js";
 import mongoose  from "mongoose";
 
-// Create Gig
+
 const createGig = async (req, res) => {
   const { title, description, skillsRequired, budget, location } = req.body;
   try {
@@ -26,7 +26,7 @@ const createGig = async (req, res) => {
   }
 };
 
-// Get single gig
+
 const getGig = async (req, res) => {
   try {
     const gig = await Gig.findById(req.params.id)
@@ -42,8 +42,8 @@ const getGig = async (req, res) => {
   }
 };
 
-// Get all gigs
-// src/Controllers/gig.controllers.js
+
+
 const getAllGig = async (req, res) => {
   try {
     const { search, location, minBudget, maxBudget } = req.query;
@@ -81,7 +81,7 @@ const getAllGig = async (req, res) => {
 };
 
 
-// Update gig
+
 const updateGig = async (req, res) => {
   try {
     let gig = await Gig.findById(req.params.id);
@@ -98,7 +98,7 @@ const updateGig = async (req, res) => {
   }
 };
 
-// Delete gig
+
 const deleteGig = async (req, res) => {
   try {
     const gig = await Gig.findById(req.params.id);
@@ -115,7 +115,7 @@ const deleteGig = async (req, res) => {
   }
 };
 
-// Apply to gig
+
 
 
 const applyGig = async (req, res) => {
@@ -204,7 +204,7 @@ const getMyApplications = async (req, res) => {
 
 
 
-// Get gigs created by client
+
 const getMyGigs = async (req, res) => {
   try {
     const gigs = await Gig.find({ client: req.user._id })
@@ -218,7 +218,7 @@ const getMyGigs = async (req, res) => {
   }
 };
 
-// Get applications for a gig
+
 const getGigApplications = async (req, res) => {
   try {
     const gig = await Gig.findById(req.params.id)
@@ -246,7 +246,7 @@ const acceptApplication = async (req, res) => {
     const gig = await Gig.findById(id).populate("appliedFreelancers.user", "_id name email");
     if (!gig) return res.status(404).json({ message: "Gig not found" });
 
-    // Find application
+    
     const application = gig.appliedFreelancers.find((a) => {
       if (!a.user) return false;
       const userId = a.user._id ? a.user._id.toString() : a.user.toString();
@@ -296,7 +296,6 @@ const completeGig = async (req, res) => {
     const gig = await Gig.findById(id);
     if (!gig) return res.status(404).json({ message: "Gig not found" });
 
-    // Only client can mark as completed
     if (gig.client.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Not authorized" });
     }
@@ -312,7 +311,6 @@ const completeGig = async (req, res) => {
   }
 };
 
-// ✅ Add review
 const addReview = async (req, res) => {
   try {
     const { id } = req.params; // gigId
@@ -321,7 +319,6 @@ const addReview = async (req, res) => {
     const gig = await Gig.findById(id);
     if (!gig) return res.status(404).json({ message: "Gig not found" });
 
-    // Only client can review after gig is completed
     if (gig.client.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Not authorized" });
     }
@@ -329,7 +326,7 @@ const addReview = async (req, res) => {
       return res.status(400).json({ message: "Gig must be completed to review" });
     }
 
-    // Push review
+    
     gig.reviews.push({
       freelancer: gig.assignedFreelancer,
       client: req.user._id,
@@ -345,7 +342,7 @@ const addReview = async (req, res) => {
   }
 };
 
-// ✅ Get all reviews of a freelancer
+
 const getFreelancerReviews = async (req, res) => {
   try {
     const { freelancerId } = req.params;

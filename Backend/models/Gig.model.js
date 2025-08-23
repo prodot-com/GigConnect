@@ -42,7 +42,7 @@ const gigSchema = new mongoose.Schema(
       default: "Open",
     },
 
-    isPaid: { type: Boolean, default: false },  // ✅ NEW
+    isPaid: { type: Boolean, default: false },  
 
     reviews: [reviewSchema],
   },
