@@ -54,7 +54,6 @@ const MyGigs = () => {
   return (
 
     <div className="min-h-screen w-full relative bg-white">
-  {/* Soft Green Glow */}
   <div
     className="absolute inset-0 z-0"
     style={{
@@ -63,9 +62,8 @@ const MyGigs = () => {
       `,
     }}
   />
-     {/* Your Content/Components */}
+
         <div className="relative z-10 min-h-screen flex flex-col font-mono">
-      {/* Navbar */}
       <nav className="w-full bg-gray-100 border-b-4 border-black cursor-pointer py-4 flex justify-between items-center px-6">
         <h1 className="text-4xl flex font-extrabold items-center text-indigo-700">
           <img src={GigConnect_logo} alt="logo" className="h-15 w-auto mr-2"/>
@@ -87,7 +85,7 @@ const MyGigs = () => {
         </div>
       </nav>
 
-      {/* Main Content */}
+      
       <main className="flex-grow px-6 py-6">
         <h2 className="text-3xl font-bold mb-6 text-center">My Gigs</h2>
 
@@ -139,7 +137,6 @@ const MyGigs = () => {
         )}
       </main>
 
-      {/* Footer */}
       <footer className="flex items-center justify-center border-t-2 border-black font-bold bg-gray-400 py-3 mt-6">
         <Copyright />
         <p className="p-2 pl-0">2025 GigConnect. All rights reserved.</p>

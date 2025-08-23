@@ -18,7 +18,7 @@ const ClientDashboard = () => {
   return (
 
     <div className="min-h-screen w-full relative bg-white">
-  {/* Soft Green Glow */}
+ 
   <div
     className="absolute inset-0 z-0"
     style={{
@@ -27,9 +27,9 @@ const ClientDashboard = () => {
       `,
     }}
   />
-     {/* Your Content/Components */}
+     
         <div className="relative z-10 flex flex-col min-h-screen font-mono">
-      {/* Navbar */}
+
       <header className="flex justify-between items-center px-6 py-4 shadow-md bg-gray-100 border-b-2">
         <h2
           className="text-2xl sm:text-3xl font-bold text-indigo-700 cursor-pointer"
@@ -68,7 +68,7 @@ const ClientDashboard = () => {
             </p>
           </div>
 
-          {/* Dashboard Actions */}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div
               className="bg-white shadow-md border-2 border-black p-6 hover:shadow-xl transition cursor-pointer"

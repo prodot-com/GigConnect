@@ -38,7 +38,6 @@ const FreelancerProfile = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      {/* Navbar */}
       <div className="flex justify-between items-center px-6 py-4 shadow-md bg-white mb-6">
         <h2 className="text-2xl font-bold text-indigo-700">GigConnect</h2>
         <button
@@ -49,15 +48,14 @@ const FreelancerProfile = () => {
         </button>
       </div>
 
-      {/* Profile Card */}
+      
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8">
         <div className="flex flex-col md:flex-row items-center md:items-start">
-          {/* Profile Picture */}
           <div className="w-32 h-32 bg-gray-300 rounded-full flex items-center justify-center text-3xl font-bold text-white bg-indigo-600">
             {freelancer?.name?.charAt(0)}
           </div>
 
-          {/* Info */}
+         
           <div className="md:ml-8 mt-4 md:mt-0 w-full">
             <div className="flex justify-between items-center">
               <h1 className="text-3xl font-bold text-gray-800">

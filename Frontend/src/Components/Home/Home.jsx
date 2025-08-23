@@ -70,7 +70,7 @@ const Home = () => {
       backgroundSize: "100% 100%",
     }}
   />
-  {/* Your Content/Components */}
+  
 
     <div className=" relative z-10 font-mono min-h-screen  flex flex-col">
         <nav className="w-full bg-gray-100 border-b-4 border-black  py-4 flex justify-between items-center">

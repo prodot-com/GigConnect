@@ -86,7 +86,6 @@ const BrowseGigs = () => {
   return (
 
     <div className="min-h-screen w-full relative bg-white">
-  {/* Soft Green Glow */}
   <div
     className="absolute inset-0 z-0"
     style={{
@@ -95,7 +94,7 @@ const BrowseGigs = () => {
       `,
     }}
   />
-     {/* Your Content/Components */}
+    
         <div className="relative z-10 min-h-screen flex flex-col font-mono">
       <nav className="w-full bg-gray-100 border-b-4 border-black cursor-pointer py-4 flex justify-between items-center">
         <h1 className="text-4xl flex font-extrabold items-center text-indigo-700">

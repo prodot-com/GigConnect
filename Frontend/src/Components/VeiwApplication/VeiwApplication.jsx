@@ -5,7 +5,7 @@ import GigConnect_logo from "../../assets/GigConnect_logo.png";
 import { Copyright } from "lucide-react";
 
 const ViewApplications = () => {
-  const { id } = useParams(); // gigId
+  const { id } = useParams(); 
   const navigate = useNavigate();
 
   const [gig, setGig] = useState(null);
@@ -13,7 +13,7 @@ const ViewApplications = () => {
   const [alert, setAlert] = useState("");
   const [review, setReview] = useState({ rating: 0, comment: "" });
 
-  // ✅ two separate modals
+
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showFailureModal, setShowFailureModal] = useState(false);
 
@@ -100,7 +100,6 @@ const ViewApplications = () => {
         return;
       }
 
-      // ✅ send real gigId instead of hardcoded value
       const { data: order } = await axios.post(
         "http://localhost:9000/api/payments/create-order",
         { amount: gig.budget, gigId: id }
@@ -131,7 +130,7 @@ const ViewApplications = () => {
 
             if (verifyRes.data.success) {
   setShowSuccessModal(true);
-  setGig(verifyRes.data.gig); // 🔥 instantly update gig with new isPaid=true
+  setGig(verifyRes.data.gig); 
 } else {
   setShowFailureModal(true);
 }
@@ -167,9 +166,8 @@ const ViewApplications = () => {
         }}
       />
 
-      {/* Content */}
+     
       <div className="relative z-10 min-h-screen flex flex-col font-mono">
-        {/* Navbar */}
         <nav className="w-full bg-gray-100 border-b-4 border-black cursor-pointer py-4 flex justify-between items-center px-6">
           <h1 className="text-4xl flex font-extrabold items-center text-indigo-700">
             <img src={GigConnect_logo} alt="logo" className="h-15 w-auto mr-2" />
@@ -194,7 +192,7 @@ const ViewApplications = () => {
           </div>
         </nav>
 
-        {/* Main Content */}
+     
         <main className="flex-grow p-6">
           <h1 className="text-2xl font-bold text-center text-indigo-700 mb-6">
             Applications for {gig?.title}
@@ -202,7 +200,7 @@ const ViewApplications = () => {
 
           {alert && <p className="text-center text-red-600 mb-4">{alert}</p>}
 
-          {/* Applications */}
+          
           {(!gig?.appliedFreelancers ||
           gig.appliedFreelancers.length === 0) ? (
             <p className="text-center text-gray-600">No applications yet.</p>
@@ -325,7 +323,6 @@ const ViewApplications = () => {
             </div>
           )}
 
-          {/* Mark Completed */}
           {gig?.status === "In Progress" && (
             <div className="text-center mt-6">
               <button
@@ -337,7 +334,6 @@ const ViewApplications = () => {
             </div>
           )}
 
-          {/* Reviews */}
           {gig?.status === "Completed" && gig.assignedFreelancer && (
             <div className="mt-6 bg-white p-4 shadow-lg border-2 border-black">
               <h3 className="text-lg font-semibold mb-2">Leave a Review</h3>
@@ -396,7 +392,6 @@ const ViewApplications = () => {
           )}
         </main>
 
-        {/* ✅ Success Modal */}
         {showSuccessModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm z-50">
             <div className="bg-white/65 backdrop-blur-lg border-4  shadow-xl p-6 text-center w-96 border-bl">
@@ -416,12 +411,12 @@ const ViewApplications = () => {
 
         )}
 
-        {/* ❌ Failure Modal
+        {/* Failure Modal
         {showFailureModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white rounded-2xl shadow-lg p-6 text-center w-96">
               <h2 className="text-2xl font-bold text-red-600">
-                ❌ Payment Failed
+                Payment Failed
               </h2>
               <p className="mt-2 text-gray-600">
                 Something went wrong. Please try again.

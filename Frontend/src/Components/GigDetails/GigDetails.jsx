@@ -102,7 +102,7 @@ const GigDetails = () => {
       `,
     }}
   />
-     {/* Your Content/Components */}
+     
         <div className="relative z-10 min-h-screen flex flex-col font-mono">
       <nav className="w-full bg-gray-100 shadow-md border-b border-gray-200 py-4 px-6 flex justify-between items-center">
         <h1 className="text-3xl flex font-extrabold items-center text-indigo-700 gap-2">

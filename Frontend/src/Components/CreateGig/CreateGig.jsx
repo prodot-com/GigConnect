@@ -61,7 +61,7 @@ const CreateGig = () => {
   return (
 
     <div className="min-h-screen w-full relative bg-white">
-  {/* Soft Green Glow */}
+  
   <div
     className="absolute inset-0 z-0"
     style={{
@@ -70,7 +70,7 @@ const CreateGig = () => {
       `,
     }}
   />
-     {/* Your Content/Components */}
+     
         <div className="relative z-10 min-h-screen flex flex-col font-mono">
 
       <nav className="w-full bg-gray-100 border-b-4 border-black cursor-pointer py-4 flex justify-between items-center px-6">
@@ -106,9 +106,8 @@ const CreateGig = () => {
     )}
 
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Form Row */}
+    
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {/* Title */}
         <input
           type="text"
           name="title"
@@ -119,7 +118,6 @@ const CreateGig = () => {
           placeholder="e.g. Website Development"
         />
 
-        {/* Location */}
         <input
           type="text"
           name="location"
@@ -130,7 +128,7 @@ const CreateGig = () => {
           placeholder="Kolkata, India"
         />
 
-        {/* Budget */}
+        
         <input
           type="number"
           name="budget"
@@ -142,7 +140,7 @@ const CreateGig = () => {
         />
       </div>
 
-      {/* Skills Row */}
+     
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input
           type="text"
@@ -162,7 +160,7 @@ const CreateGig = () => {
         />
       </div>
 
-      {/* Submit Button */}
+
       <button
         type="submit"
         className="w-full cursor-pointer bg-indigo-700 text-white py-2 border-2 border-black hover:bg-indigo-800 transition"

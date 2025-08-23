@@ -54,7 +54,7 @@ const FreelancerDashboard = () => {
       `,
     }}
   />
-     {/* Your Content/Components */}
+    
         <div className=" relative z-10 flex flex-col min-h-screen  font-mono">
       <nav className="w-full bg-gray-100 border-b-4 border-black cursor-pointer  py-4 flex justify-between items-center">
         <h1 className="text-4xl flex font-extrabold items-center text-indigo-700">

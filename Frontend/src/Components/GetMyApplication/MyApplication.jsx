@@ -52,7 +52,7 @@ const MyApplications = () => {
       `,
     }}
   />
-     {/* Your Content/Components */}
+
         <div className="relative z-10 min-h-screen flex flex-col  font-mono">
       
       <nav className="w-full bg-gray-100 border-b-4 border-black py-4 flex justify-between items-center px-6">

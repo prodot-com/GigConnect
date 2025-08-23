@@ -1,4 +1,3 @@
-// server.js
 import 'dotenv/config';
 import connect_db from "./src/db/Index.js";
 import { app } from "./App.js";

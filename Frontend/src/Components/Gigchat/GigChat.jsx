@@ -1,4 +1,3 @@
-// src/Components/GigChat/GigChat.js
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
@@ -29,7 +28,6 @@ const GigChat = () => {
 
     setUser(userDetails);
 
-    // Check if user is client or applied freelancer
     const checkAccess = async () => {
       try {
         const res = await axios.get(`http://localhost:9000/api/gigs/${gigId}`, {
@@ -53,7 +51,7 @@ const GigChat = () => {
     };
     checkAccess();
 
-    // Connect to Socket.IO
+    
     const socketInstance = io("http://localhost:9000", {
       auth: { token },
     });
@@ -71,7 +69,7 @@ const GigChat = () => {
       setMessages((prev) => [...prev, message]);
     });
 
-    // Fetch past messages
+    
     const fetchMessages = async () => {
       try {
         const res = await axios.get(
@@ -127,9 +125,8 @@ const GigChat = () => {
       `,
     }}
   />
-     {/* Your Content/Components */}
+     
         <div className="relative z-10 flex flex-col min-h-screen font-mono">
-      {/* Navbar */}
 <nav className="w-full bg-gray-100 shadow-md border-b border-gray-200 py-4 px-6 flex justify-between items-center">
   <h1 className="text-3xl flex font-extrabold items-center text-indigo-700 gap-2">
     <img src={GigConnect_logo} alt="logo" className="h-12 w-auto" />
@@ -162,7 +159,7 @@ const GigChat = () => {
 </nav>
 
 
-      {/* Chat Section */}
+      
       <main className="flex-grow container mx-auto p-4 sm:p-8">
         <div className="max-w-3xl mx-auto bg-white shadow-lg border-2 border-black p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6">
@@ -210,7 +207,7 @@ const GigChat = () => {
 </div>
 
 
-          {/* Input */}
+          
           <form onSubmit={handleSendMessage} className="flex gap-2">
             <input
               type="text"
@@ -229,7 +226,7 @@ const GigChat = () => {
         </div>
       </main>
 
-      {/* Footer */}
+      
       <footer className="bg-gray-400 font-bold p-4 text-center">
         <p>© 2025 GigConnect. All rights reserved.</p>
       </footer>
