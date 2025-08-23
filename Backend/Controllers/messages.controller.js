@@ -1,4 +1,4 @@
-// src/Controllers/messages.controller.js
+
 import { Message } from "../models/Message.model.js";
 
 const getMessages = async (req, res) => {

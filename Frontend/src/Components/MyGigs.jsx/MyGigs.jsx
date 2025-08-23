@@ -13,6 +13,7 @@ const MyGigs = () => {
     const fetchMyGigs = async () => {
       try {
         const token = localStorage.getItem("token");
+        console.log(token)
         if (!token) {
           navigate("/");
           return;

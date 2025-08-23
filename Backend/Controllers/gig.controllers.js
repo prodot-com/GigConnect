@@ -206,7 +206,10 @@ const getMyApplications = async (req, res) => {
 const getMyGigs = async (req, res) => {
   try {
     const gigs = await Gig.find({ client: req.user._id })
+    // console.log(req.user)
       .populate("appliedFreelancers.user", "name email skills");
+
+      console.log(req.user)
     res.json(gigs);
   } catch (err) {
     res.status(500).json({ message: err.message });

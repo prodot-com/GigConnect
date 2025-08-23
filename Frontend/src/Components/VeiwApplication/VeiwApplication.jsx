@@ -12,6 +12,8 @@ const ViewApplications = () => {
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState("");
   const [review, setReview] = useState({ rating: 0, comment: "" });
+  const [showPaymentModal, setShowPaymentModal] = useState(false); 
+  const [isPaid, setIsPaid] = useState(false);
 
   const token = localStorage.getItem("token");
 
@@ -31,7 +33,6 @@ const ViewApplications = () => {
 
   useEffect(() => {
     fetchGig();
-    
   }, [id]);
 
   const handleDecision = async (freelancerId, action) => {
@@ -92,6 +93,59 @@ const ViewApplications = () => {
   if (loading) {
     return <p className="text-center mt-10 font-mono">Loading...</p>;
   }
+
+  const handlePayment = async () => {
+    try {
+      if (!window.Razorpay) {
+        alert("Razorpay SDK not loaded. Refresh and try again.");
+        return;
+      }
+
+      const { data: order } = await axios.post("http://localhost:9000/api/payments/create-order", {
+        amount: 500,
+        gigId: "12345"
+      });
+
+      const { data: { key } } = await axios.get("http://localhost:9000/api/payments/get-key");
+
+      const options = {
+        key,
+        amount: order.amount,
+        currency: order.currency,
+        name: "GigConnect",
+        description: "Gig Payment",
+        order_id: order.id,
+        handler: async function (response) {
+          try {
+            const verifyRes = await axios.post("http://localhost:9000/api/payments/verify-payment", {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+
+            if (verifyRes.data.success) {
+              setShowPaymentModal(true); 
+              
+              setIsPaid(true)
+            } else {
+              setAlert("❌ Payment verification failed.");
+              
+            }
+          } catch (err) {
+            console.error("Verification error:", err);
+            setAlert("⚠️ Server error during payment verification.");
+          }
+        },
+        theme: { color: "#4F46E5" },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+
+    } catch (err) {
+      console.error("Payment Error:", err);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100 font-mono">
@@ -157,29 +211,43 @@ const ViewApplications = () => {
                       >
                         Reject
                       </button>
-                      {/* <button
-                        onClick={() => navigate(`/gig/${id}/chat?to=${fid}`)}
-                        className="px-4 py-2 bg-indigo-600 text-white border-2 border-black hover:bg-indigo-700"
-                      >
-                        Chat
-                      </button> */}
                     </div>
                   )}
                   </div>
                   <div className="w-1/3 flex justify-center items-center">
                     {gig?.status === "Completed" && gig?.assignedFreelancer && (
-                      <div className= "   flex flex-col items-start justify-center p-6">
-                          <h3 className="text-lg font-semibold mb-2">Chat with Assigned Freelancer</h3>
-                            <button
-                            onClick={() => navigate(`/gig/${id}/chat?to=${gig.assignedFreelancer._id}`)}
-                            className="px-6 py-2 bg-indigo-700 text-white border-2 border-black hover:bg-indigo-800 transition"
-                          >
-      Open Chat
-    </button>
-  </div>
-)}
-
+                      <div className="flex flex-col items-start justify-center p-6">
+                        <h3 className="text-lg font-semibold mb-2">Chat with Assigned Freelancer</h3>
+                        <button
+                          onClick={() => navigate(`/gig/${id}/chat?to=${gig.assignedFreelancer._id}`)}
+                          className="px-6 py-2 bg-indigo-700 text-white border-2 border-black hover:bg-indigo-800 transition"
+                        >
+                          Open Chat
+                        </button>
+                      </div>
+                    )}
                   </div>
+                  {gig?.status === "Completed" && (
+                    
+                    <div className="text-center mt-6">
+    {isPaid ? (
+      <button
+        disabled
+        className="px-6 py-2 bg-gray-400 text-white border-2 border-black cursor-not-allowed"
+      >
+        Paid ✔
+      </button>
+    ) : (
+      <button
+        onClick={handlePayment}
+        className="px-6 py-2 bg-green-600 text-white border-2 border-black hover:bg-green-700"
+      >
+        Pay ₹500
+      </button>
+    )}
+  </div>
+
+                  )}
                 </div>
               );
             })}
@@ -196,8 +264,6 @@ const ViewApplications = () => {
             </button>
           </div>
         )}
-
-        
 
         {gig?.status === "Completed" && gig.assignedFreelancer && (
           <div className="mt-6 bg-white p-4 shadow-lg border-2 border-black">
@@ -231,9 +297,6 @@ const ViewApplications = () => {
           </div>
         )}
 
-       
-
-
         {gig?.reviews && gig.reviews.length > 0 && (
           <div className="mt-6 bg-gray-100 p-4 border-2 border-black">
             <h3 className="text-lg font-semibold mb-3">Reviews</h3>
@@ -248,6 +311,21 @@ const ViewApplications = () => {
         )}
       </main>
 
+      {/* ✅ Success Modal */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-2xl shadow-lg p-6 text-center w-96">
+            <h2 className="text-2xl font-bold text-green-600">✅ Payment Successful!</h2>
+            <p className="mt-2 text-gray-600">Your payment has been verified successfully.</p>
+            <button
+              onClick={() => setShowPaymentModal(false)}
+              className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
       <footer className="flex items-center justify-center border-t-2 border-black font-bold bg-gray-400 py-3 mt-6">
         <Copyright />
