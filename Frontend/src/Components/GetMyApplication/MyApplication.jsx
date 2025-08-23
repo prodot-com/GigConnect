@@ -17,8 +17,7 @@ const MyApplications = () => {
           return;
         }
 
-        const res = await axios.get(
-          "http://localhost:9000/api/gigs/my-applications",
+        const res = await axios.get("https://gigconnect-sq1z.onrender.com/api/gigs/my-applications",
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setGigs(res.data);
@@ -27,7 +26,7 @@ const MyApplications = () => {
         const user = JSON.parse(localStorage.getItem("userDetails"));
         if (user?._id) {
           const reviewsRes = await axios.get(
-            `http://localhost:9000/api/gigs/reviews/${user._id}`,
+            `https://gigconnect-sq1z.onrender.com/api/gigs/reviews/${user._id}`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
           setReviews(reviewsRes.data);

@@ -19,7 +19,7 @@ const MyGigs = () => {
           return;
         }
 
-        const { data } = await axios.get("http://localhost:9000/api/gigs/my-gigs", {
+        const { data } = await axios.get("https://gigconnect-sq1z.onrender.com/api/gigs/my-gigs", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setGigs(data);

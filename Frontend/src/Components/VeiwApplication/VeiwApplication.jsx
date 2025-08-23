@@ -21,7 +21,7 @@ const ViewApplications = () => {
 
   const fetchGig = async () => {
     try {
-      const { data } = await axios.get(`http://localhost:9000/api/gigs/${id}`, {
+      const { data } = await axios.get(`https://gigconnect-sq1z.onrender.com/api/gigs/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log(data.budget)
@@ -41,7 +41,7 @@ const ViewApplications = () => {
   const handleDecision = async (freelancerId, action) => {
     try {
       const res = await axios.post(
-        `http://localhost:9000/api/gigs/${id}/${action}/${freelancerId}`,
+        `https://gigconnect-sq1z.onrender.com/api/gigs/${id}/${action}/${freelancerId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -66,7 +66,7 @@ const ViewApplications = () => {
   const handleComplete = async () => {
     try {
       const res = await axios.post(
-        `http://localhost:9000/api/gigs/${id}/complete`,
+        `https://gigconnect-sq1z.onrender.com/api/gigs/${id}/complete`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -81,7 +81,7 @@ const ViewApplications = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `http://localhost:9000/api/gigs/${id}/review`,
+        `https://gigconnect-sq1z.onrender.com/api/gigs/${id}/review`,
         review,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -101,13 +101,13 @@ const ViewApplications = () => {
       }
 
       const { data: order } = await axios.post(
-        "http://localhost:9000/api/payments/create-order",
+        "https://gigconnect-sq1z.onrender.com/api/payments/create-order",
         { amount: gig.budget, gigId: id }
       );
 
       const {
         data: { key },
-      } = await axios.get("http://localhost:9000/api/payments/get-key");
+      } = await axios.get("https://gigconnect-sq1z.onrender.com/api/payments/get-key");
 
       const options = {
         key,
@@ -119,7 +119,7 @@ const ViewApplications = () => {
         handler: async function (response) {
           try {
             const verifyRes = await axios.post(
-              "http://localhost:9000/api/payments/verify-payment",
+              "https://gigconnect-sq1z.onrender.com/api/payments/verify-payment",
               {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,

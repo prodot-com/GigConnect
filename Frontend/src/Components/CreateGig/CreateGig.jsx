@@ -40,8 +40,7 @@ const CreateGig = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post(
-        "http://localhost:9000/api/gigs",
+      const res = await axios.post("https://gigconnect-sq1z.onrender.com/api/gigs",
         gig,
         { headers: { Authorization: `Bearer ${token}` } }
       );

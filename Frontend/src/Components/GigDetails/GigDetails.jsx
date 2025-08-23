@@ -18,7 +18,7 @@ const GigDetails = () => {
   useEffect(() => {
     const fetchGig = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:9000/api/gigs/${id}`);
+        const { data } = await axios.get(`https://gigconnect-sq1z.onrender.com/api/gigs/${id}`);
         setGig(data);
         console.log(data.status);
 
@@ -56,7 +56,7 @@ const GigDetails = () => {
       }
 
       const res = await axios.post(
-        `http://localhost:9000/api/gigs/${id}/apply`,
+        `https://gigconnect-sq1z.onrender.com/api/gigs/${id}/apply`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

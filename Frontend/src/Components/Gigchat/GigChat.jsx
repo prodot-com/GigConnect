@@ -30,7 +30,7 @@ const GigChat = () => {
 
     const checkAccess = async () => {
       try {
-        const res = await axios.get(`http://localhost:9000/api/gigs/${gigId}`, {
+        const res = await axios.get(`https://gigconnect-sq1z.onrender.com/api/gigs/${gigId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const gig = res.data;
@@ -52,7 +52,7 @@ const GigChat = () => {
     checkAccess();
 
     
-    const socketInstance = io("http://localhost:9000", {
+    const socketInstance = io("https://gigconnect-sq1z.onrender.com", {
       auth: { token },
     });
 
@@ -73,7 +73,7 @@ const GigChat = () => {
     const fetchMessages = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:9000/api/messages/${gigId}`,
+          `https://gigconnect-sq1z.onrender.com/api/messages/${gigId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

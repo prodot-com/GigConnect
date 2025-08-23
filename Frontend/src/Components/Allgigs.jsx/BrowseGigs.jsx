@@ -27,7 +27,7 @@ const BrowseGigs = () => {
 
   const fetchGigs = async () => {
     try {
-      const { data } = await axios.get("http://localhost:9000/api/gigs", {
+      const { data } = await axios.get("https://gigconnect-sq1z.onrender.com/api/gigs", {
         params: { search, location, minBudget, maxBudget },
       });
       console.log("Fetched gigs:", data);
@@ -55,8 +55,7 @@ const BrowseGigs = () => {
       }
 
       console.log("Applying to gigId:", gigId);
-      const res = await axios.post(
-        `http://localhost:9000/api/gigs/${gigId}/apply`,
+      const res = await axios.post(`https://gigconnect-sq1z.onrender.com/api/gigs/${gigId}/apply`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -18,7 +18,7 @@ const FreelancerDashboard = () => {
           return;
         }
 
-        const res = await axios.get("http://localhost:9000/api/users/me", {
+        const res = await axios.get("https://gigconnect-sq1z.onrender.com/api/users/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
