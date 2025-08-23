@@ -1,6 +1,6 @@
 // src/Components/GigChat/GigChat.js
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import axios from "axios";
 import GigConnect_logo from "../../assets/GigConnect_logo.png";
@@ -40,7 +40,9 @@ const GigChat = () => {
           (a) => a.user._id === userDetails._id
         );
         if (!isClient && !isApplied) {
-          setError("You must be the client or an applied freelancer to access this chat");
+          setError(
+            "You must be the client or an applied freelancer to access this chat"
+          );
           navigate(`/gig/${gigId}`);
         }
       } catch (err) {
@@ -54,8 +56,6 @@ const GigChat = () => {
     const socketInstance = io("http://localhost:9000", {
       auth: { token },
     });
-
-   
 
     setSocket(socketInstance);
 
@@ -73,9 +73,12 @@ const GigChat = () => {
     // Fetch past messages
     const fetchMessages = async () => {
       try {
-        const res = await axios.get(`http://localhost:9000/api/messages/${gigId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `http://localhost:9000/api/messages/${gigId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setMessages(res.data);
       } catch (err) {
         console.error("Error fetching messages:", err);
@@ -115,47 +118,35 @@ const GigChat = () => {
     <div className="flex flex-col min-h-screen font-mono bg-gray-100">
       {/* Navbar */}
       <nav className="w-full bg-gray-100 shadow-md border-b border-gray-200 py-4 px-6 flex justify-between items-center">
-              <h1 className="text-3xl flex font-extrabold items-center text-indigo-700 gap-2">
-                <img src={GigConnect_logo} alt="logo" className="h-12 w-auto" />
-                GigConnect
-              </h1>
-              <div className="space-x-4">
-                <button
-                  onClick={() => navigate("/all-gigs")}
-                  className="px-6 py-2 bg-indigo-700 text-white border-2  border-black hover:bg-indigo-800 transition"
-                >
-                  Back to Gigs
-                </button>
-                <button
-                  onClick={logout}
-                  className="px-6 py-2 bg-green-500 text-white border-2  border-black hover:bg-green-600 font-bold"
-                >
-                  Logout
-                </button>
-              </div>
-            </nav>
+        <h1 className="text-3xl flex font-extrabold items-center text-indigo-700 gap-2">
+          <img src={GigConnect_logo} alt="logo" className="h-12 w-auto" />
+          GigConnect
+        </h1>
+        <div className="space-x-4">
+          <button
+            onClick={() => navigate("/all-gigs")}
+            className="px-6 py-2 bg-indigo-700 text-white border-2  border-black hover:bg-indigo-800 transition"
+          >
+            Back to Gigs
+          </button>
+          <button
+            onClick={logout}
+            className="px-6 py-2 bg-green-500 text-white border-2  border-black hover:bg-green-600 font-bold"
+          >
+            Logout
+          </button>
+        </div>
+      </nav>
 
-     
+      {/* Chat Section */}
       <main className="flex-grow container mx-auto p-4 sm:p-8">
         <div className="max-w-3xl mx-auto bg-white shadow-lg border-2 border-black p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6">
-            <h2 className="text-2xl sm:text-3xl font-bold text-indigo-700">Chat for Gig</h2>
-            {/* <div className="flex gap-2 mt-2 sm:mt-0">
-              <button
-                onClick={() => navigate(`/gig/${gigId}`)}
-                className="px-3 sm:px-4 py-2 bg-indigo-700 text-white rounded-lg hover:bg-indigo-800 text-sm sm:text-base"
-              >
-                Back to Gig
-              </button>
-              <button
-                onClick={() => navigate("/freelancer-dashboard")}
-                className="px-3 sm:px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 text-sm sm:text-base"
-              >
-                Back to Dashboard
-              </button>
-            </div> */}
+            <h2 className="text-2xl sm:text-3xl font-bold text-indigo-700">
+              Chat for Gig
+            </h2>
           </div>
-          <div className="h-[60vh] sm:h-96 overflow-y-auto mb-4 p-4 bg-gray-50 ">
+          <div className="h-[60vh] sm:h-96 overflow-y-auto mb-4 p-4 bg-gray-50">
             {messages.map((msg, index) => {
               const senderId =
                 typeof msg.sender === "object" && msg.sender && msg.sender._id
@@ -164,28 +155,26 @@ const GigChat = () => {
                   ? msg.sender
                   : "";
               const isOutgoing = senderId === user._id.toString();
-              console.log(isOutgoing)
 
               return (
                 <div
                   key={index}
-                  className={`mb-4 flex ${isOutgoing ? "justify-end" : "justify-start"}`}
+                  className={`mb-4 flex ${
+                    isOutgoing ? "justify-end" : "justify-start"
+                  }`}
                 >
                   <div
-                    className={`w-[100%] sm:w-[100%]  p-3 border-2 border-black shadow-md ${
+                    className={`max-w-xs sm:max-w-3xl p-3 pr-8 border-2 border-black shadow-md rounded-2xl ${
                       isOutgoing
                         ? "bg-indigo-700 text-white rounded-br-none"
                         : "bg-green-200 text-green-900 rounded-bl-none"
                     }`}
                   >
-                    {/* <p className="text-sm font-semibold">
-                      {isOutgoing ? "You" : msg.sender?.name || "Unknown"}
-                    </p> */}
-                    <p className="text-lg mt-1">{msg.content}</p>
+                    <p className="text-lg">{msg.content}</p>
                     <p
-                      className={`text-xs ${
+                      className={`text-xs mt-2 ${
                         isOutgoing ? "text-gray-300" : "text-green-600"
-                      } mt-2`}
+                      }`}
                     >
                       {new Date(msg.timestamp).toLocaleTimeString()}
                     </p>
@@ -195,6 +184,8 @@ const GigChat = () => {
             })}
             <div ref={messagesEndRef} />
           </div>
+
+          {/* Input */}
           <form onSubmit={handleSendMessage} className="flex gap-2">
             <input
               type="text"
