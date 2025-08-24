@@ -203,6 +203,7 @@ const BrowseGigs = () => {
                       ))}
                     </div>
                   </div>
+                  
 
                   <p className="mt-2">
                     <span className="font-semibold">Budget:</span> ₹{gig.budget}
