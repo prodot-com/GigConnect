@@ -127,23 +127,23 @@ const GigChat = () => {
   />
      
         <div className="relative z-10 flex flex-col min-h-screen font-mono">
-<nav className="w-full bg-gray-100 shadow-md border-b border-gray-200 py-4 px-6 flex justify-between items-center">
-  <h1 className="text-3xl flex font-extrabold items-center text-indigo-700 gap-2">
-    <img src={GigConnect_logo} alt="logo" className="h-12 w-auto" />
+<nav className="w-full bg-gray-100 shadow-md border-b border-gray-200 py-4 px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0">
+  <h1 className="text-2xl sm:text-3xl flex font-extrabold items-center text-indigo-700 gap-2">
+    <img src={GigConnect_logo} alt="logo" className="h-10 sm:h-12 w-auto" />
     GigConnect
   </h1>
-  <div className="space-x-4">
+  <div className="flex flex-wrap gap-2 sm:gap-4 w-full sm:w-auto">
     {user?.role === "Client" ? (
       <button
         onClick={() => navigate(`/gig/${gigId}/applications`)}
-        className="px-6 py-2 bg-indigo-700 text-white border-2 border-black hover:bg-indigo-800 transition"
+        className="px-4 sm:px-6 py-2 bg-indigo-700 text-white border-2 border-black hover:bg-indigo-800 w-full sm:w-auto transition"
       >
         Applications
       </button>
     ) : (
       <button
         onClick={() => navigate("/my-applications")}
-        className="px-6 py-2 bg-indigo-700 text-white border-2 border-black hover:bg-indigo-800 transition"
+        className="px-4 sm:px-6 py-2 bg-indigo-700 text-white border-2 border-black hover:bg-indigo-800 w-full sm:w-auto transition"
       >
         My Applications
       </button>
@@ -151,12 +151,13 @@ const GigChat = () => {
 
     <button
       onClick={logout}
-      className="px-6 py-2 bg-green-500 text-white border-2 border-black hover:bg-green-600 font-bold"
+      className="px-4 sm:px-6 py-2 bg-green-500 text-white border-2 border-black hover:bg-green-600 font-bold w-full sm:w-auto"
     >
       Logout
     </button>
   </div>
 </nav>
+
 
 
       
