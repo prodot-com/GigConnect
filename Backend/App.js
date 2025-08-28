@@ -13,7 +13,8 @@ app.use(cors({
   origin: [
     "http://localhost:5173", 
     "https://gig-connect-eight.vercel.app",
-    "https://gigconnect-sq1z.onrender.com/"
+    "https://gigconnect-sq1z.onrender.com/",
+    "https://gig-connect-7jr8.vercel.app/"
   ],
   credentials: true
 }));
