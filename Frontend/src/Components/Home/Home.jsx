@@ -27,7 +27,7 @@ const Home = () => {
     const handleSignUp = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post("http://localhost:9000/api/auth/register", form);
+            const res = await axios.post("https://gigconnect-sq1z.onrender.com/api/auth/register", form);
             setAlert(res.data.message);
         } catch (error) {
             setAlert(error.response?.data?.message || "Something went wrong");
