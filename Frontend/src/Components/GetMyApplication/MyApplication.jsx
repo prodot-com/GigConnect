@@ -96,7 +96,9 @@ const MyApplications = () => {
 
         {alert && <p className="text-center text-red-600 font-semibold mb-4">{alert}</p>}
 
-        
+        {gigs.length === 0 && !alert && (
+          <p className="text-center text-gray-600">You haven’t applied to any gigs yet.</p>
+        )}
 
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

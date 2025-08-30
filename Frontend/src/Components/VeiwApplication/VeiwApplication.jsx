@@ -152,9 +152,13 @@ const ViewApplications = () => {
     }
   };
 
-  if (loading) {
-    return <p className="text-center mt-10 font-mono">Loading...</p>;
-  }
+  if (loading) return (
+  <div className="flex justify-center items-center h-screen space-x-3">
+    <div className="w-5 h-5 bg-blue-500 rounded-full bounce-high"></div>
+    <div className="w-5 h-5 bg-blue-500 rounded-full bounce-high" style={{ animationDelay: '-0.2s' }}></div>
+    <div className="w-5 h-5 bg-blue-500 rounded-full bounce-high" style={{ animationDelay: '-0.4s' }}></div>
+  </div>
+);
 
   return (
     <div className="min-h-screen w-full relative bg-white">

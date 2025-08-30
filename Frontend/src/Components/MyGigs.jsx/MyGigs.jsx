@@ -40,9 +40,11 @@ const MyGigs = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-100 font-mono">
-        <div className="flex-grow flex items-center justify-center">
-          <p className="text-center mt-10 font-mono">Loading your gigs...</p>
-        </div>
+        <div className="flex justify-center items-center h-screen space-x-3">
+    <div className="w-5 h-5 bg-blue-500 rounded-full bounce-high"></div>
+    <div className="w-5 h-5 bg-blue-500 rounded-full bounce-high" style={{ animationDelay: '-0.2s' }}></div>
+    <div className="w-5 h-5 bg-blue-500 rounded-full bounce-high" style={{ animationDelay: '-0.4s' }}></div>
+  </div>
         <footer className="flex items-center justify-center border-t-2 border-black font-bold bg-gray-400 py-3">
           <Copyright />
           <p className="p-2 pl-0">2025 GigConnect. All rights reserved.</p>
