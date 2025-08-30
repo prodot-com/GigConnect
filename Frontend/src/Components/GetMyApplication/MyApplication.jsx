@@ -6,6 +6,7 @@ const MyApplications = () => {
   const [gigs, setGigs] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [alert, setAlert] = useState("");
+  const [loading, setLoading] = useState(true)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,11 +34,21 @@ const MyApplications = () => {
         }
       } catch (err) {
         setAlert("Failed to load applications");
+      } finally{
+          setLoading(false)
       }
     };
 
     fetchApplications();
   }, []);
+
+  if (loading) return (
+  <div className="flex justify-center items-center h-screen space-x-3">
+    <div className="w-5 h-5 bg-blue-500 rounded-full bounce-high"></div>
+    <div className="w-5 h-5 bg-blue-500 rounded-full bounce-high" style={{ animationDelay: '-0.2s' }}></div>
+    <div className="w-5 h-5 bg-blue-500 rounded-full bounce-high" style={{ animationDelay: '-0.4s' }}></div>
+  </div>
+);
 
   return (
 
@@ -85,9 +96,7 @@ const MyApplications = () => {
 
         {alert && <p className="text-center text-red-600 font-semibold mb-4">{alert}</p>}
 
-        {gigs.length === 0 && !alert && (
-          <p className="text-center text-gray-600">You haven’t applied to any gigs yet.</p>
-        )}
+        
 
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
