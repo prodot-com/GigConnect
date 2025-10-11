@@ -1,0 +1,39 @@
+import React from 'react'
+import Home from './Components/Home/Home'
+import { BrowserRouter, Routes, Route , Link} from 'react-router-dom'
+import ClientDashboard from './Components/Dashboard/ClientDashboard'
+import FreeDashboard from './Components/Dashboard/FreeDashboard'
+import CreateGig from './Components/CreateGig/CreateGig'
+import MyGigs from './Components/MyGigs.jsx/MyGigs'
+import AllGigs from './Components/Allgigs.jsx/BrowseGigs'
+import FreelancerProfile from './Components/FreeProfile/FreeProfile'
+import MyApplications from './Components/GetMyApplication/MyApplication'
+import GigDetails from './Components/GigDetails/GigDetails'
+import ViewApplications from './Components/VeiwApplication/VeiwApplication'
+// import GigChat from './Components/Gigchat/GigChat'
+import BrowseGigs from './Components/Allgigs.jsx/BrowseGigs'
+import GigChat from './Components/Gigchat/GigChat'
+
+const App = () => {
+  return (
+    <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<Home/>} />
+          <Route path='/client' element={<ClientDashboard/>} />
+          <Route path='/freelancer-dashboard' element={<FreeDashboard/>} />
+          <Route path='/create-gig' element={<CreateGig/>} />
+          <Route path='/my-gig' element={<MyGigs/>} />
+          <Route path="/all-gigs" element={<BrowseGigs/>} />
+          <Route path="/freelancer-profile" element={<FreelancerProfile />} />
+          <Route path="/my-applications" element={<MyApplications />} />
+          <Route path="/gig/:id" element={<GigDetails />} />
+          <Route path="/gig/:id/applications" element={<ViewApplications />} />
+          <Route path="/gig/:id/chat" element={<GigChat />} />
+
+
+        </Routes>
+    </BrowserRouter>
+  )
+}
+
+export default App
